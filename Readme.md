@@ -112,16 +112,19 @@ this.$route.query.data
 
 1.父组件传递数据给子组件
 主要通过props属性实现：
-```bash
+```javascript
 //父组件
 <parent>
 	<child :childprops='this.data'><child>
 </parent>
+
+<script>
 data () {
 	return {
 		data: 'mclean'
 	}
 }
+</script>
 
 //子组件
 props: ['childprops']
@@ -141,26 +144,31 @@ props: {
 
 2.子组件向父组件传递
 子组件想要改变数据这在VUE里面是不允许的，因为VUE只允许单向数据传递，我们可以通过触发事件来通知父组件改变数据，从而达到改变子组件数据的目的，即拿到子组件传过来的数据。
-```bash
+```javascript
 //子组件
 <template>
 	<button @click='buttonClick'>click</button>
 </template>
 
+<script>
 methods: {
 	buttonClick () {
 		this.$emit('childMethod', childData); // 触发childMethod,传递参数childData
 	}
 }
+</script>
+
 //父组件
 <parent>
 	<child v-on:childMethod='parentMethod'></child>
 </parent>
 
+<script>
 methods: {
 	parentMethod (data) {
 		// 参数data即子组件传递的childData
 	}
 }
+</script>
 ```
 this.$emit()监听触发childMethod方法，通知父组件执行parentMethod方法,并拿到参数。
