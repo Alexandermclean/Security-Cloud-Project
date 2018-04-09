@@ -120,11 +120,11 @@ this.$route.query.data
 </parent>
 
 <script>
-data () {
-	return {
-		data: 'mclean'
+	data () {
+		return {
+			data: 'mclean'
+		}
 	}
-}
 </script>
 
 //子组件
@@ -152,11 +152,11 @@ props: {
 </template>
 
 <script>
-methods: {
-	buttonClick () {
-		this.$emit('childMethod', childData); // 触发childMethod,传递参数childData
+	methods: {
+		buttonClick () {
+			this.$emit('childMethod', childData); // 触发childMethod,传递参数childData
+		}
 	}
-}
 </script>
 
 //父组件
@@ -165,11 +165,11 @@ methods: {
 </parent>
 
 <script>
-methods: {
-	parentMethod (data) {
-		// 参数data即子组件传递的childData
+	methods: {
+		parentMethod (data) {
+			// 参数data即子组件传递的childData
+		}
 	}
-}
 </script>
 ```
 this.$emit()监听触发childMethod方法，通知父组件执行parentMethod方法,并拿到参数。
