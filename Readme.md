@@ -83,3 +83,25 @@ export default const router = new VueRouter({
 	}
 </style>
 ```
+
+## 3.数据传递
+VUE框架中可以用动态路由在不同页面间传递数据，常用的传递参数的方法是通过params和query，注意的是：由于动态路由也是传递params的，所以在 this.$router.push() 方法中path不能和params一起使用，否则params将无效。需要用name来指定页面
+
+1.params
+```javascript
+this.$router.push({name:'RouterName', params:{data: this.userID}}) //其中name参数是下一跳路由的name属性
+
+// 在目的页面使用传递过来的params里的data值
+this.$route.params.data
+```
+
+2.query
+```javascript
+this.$router.push({name:'RouterName', query:{data: this.userID}}) //其中name参数是跳转路由的name属性
+// 或者
+this.$router.push({path:'RouterPath', query:{data: this.userID}}) //其中path参数是下一跳路由的path属性
+
+// 在目的页面使用传递过来的query里的data值
+this.$route.query.data
+```
+这两种传递参数的方法区别主要在于：params传递的参数不会体现在页面的URL里，刷新页面后数据就会消失；query传递的参数会以"?userID=xxx"的后缀方式体现在URL中，刷新页面数据还会保留。
