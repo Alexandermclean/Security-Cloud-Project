@@ -112,6 +112,7 @@ this.$route.query.data
 ![](./assets/dataConmmunicate.png)
 
 1.父组件传递数据给子组件
+
 主要通过props属性实现：
 ```javascript
 //父组件
@@ -144,6 +145,7 @@ props: {
 子组件注册一个属性（props）childprops，父组件中对这个属性绑定值，子组件可以直接this.childprops调用父组件传过来的数据。
 
 2.子组件向父组件传递
+
 子组件想要改变数据这在VUE里面是不允许的，因为VUE只允许单向数据传递，我们可以通过触发事件来通知父组件改变数据，从而达到改变子组件数据的目的，即拿到子组件传过来的数据。
 ```javascript
 //子组件
