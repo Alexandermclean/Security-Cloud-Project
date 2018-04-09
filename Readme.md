@@ -105,3 +105,62 @@ this.$router.push({path:'RouterPath', query:{data: this.userID}}) //其中path�
 this.$route.query.data
 ```
 这两种传递参数的方法区别主要在于：params传递的参数不会体现在页面的URL里，刷新页面后数据就会消失；query传递的参数会以"?userID=xxx"的后缀方式体现在URL中，刷新页面数据还会保留。
+
+## 4.父子组件通信
+在单个页面里的组件间的通信，例如打开新建或编辑框时的数据传递；这里只考虑父子组件间的通信，非父子组件通信通过创建事件中心的方式暂不深究。
+![](./assets/dataConmmunicate.png)
+
+1.父组件传递数据给子组件
+主要通过props属性实现：
+```bash
+//父组件
+<parent>
+	<child :childprops='this.data'><child>
+</parent>
+data () {
+	return {
+		data: 'mclean'
+	}
+}
+
+//子组件
+props: ['childprops']
+//或者
+props: {
+    childprops: String // 这样可以指定传入的类型，如果类型不对，会警告
+}
+//再者
+props: {
+    childprops: {
+        type: Array,
+        default: 'yuhui' // 这样可以指定默认的值
+    }
+}
+```
+子组件注册一个属性（props）childprops，父组件中对这个属性绑定值，子组件可以直接this.childprops调用父组件传过来的数据。
+
+2.子组件向父组件传递
+子组件想要改变数据这在VUE里面是不允许的，因为VUE只允许单向数据传递，我们可以通过触发事件来通知父组件改变数据，从而达到改变子组件数据的目的，即拿到子组件传过来的数据。
+```bash
+//子组件
+<template>
+	<button @click='buttonClick'>click</button>
+</template>
+
+methods: {
+	buttonClick () {
+		this.$emit('childMethod', childData); // 触发childMethod,传递参数childData
+	}
+}
+//父组件
+<parent>
+	<child v-on:childMethod='parentMethod'></child>
+</parent>
+
+methods: {
+	parentMethod (data) {
+		// 参数data即子组件传递的childData
+	}
+}
+```
+this.$emit()监听触发childMethod方法，通知父组件执行parentMethod方法,并拿到参数。
