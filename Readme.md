@@ -173,3 +173,36 @@ props: {
 </script>
 ```
 this.$emit()监听触发childMethod方法，通知父组件执行parentMethod方法,并拿到参数。
+
+## 	5.状态管理
+针对这次项目，有个直观的感受就是：数据在组件间通信比较频繁的情况下，通常用的父子组件、兄弟组件通信方式就会显得异常繁琐，而且不便于管理。
+从VUE一个简单的状态自管理应用来看：
+```javascript
+new Vue({
+  // state
+  data () {
+    return {
+      count: 0
+    }
+  },
+  // view
+  template:
+    <div>{{ count }}</div>
+
+  // actions
+  methods: {
+    increment () {
+      this.count++
+    }
+  }
+})
+```
+这个状态自管理应用包含以下几个部分：
+state：驱动应用的数据源；
+view：以声明方式将 state 映射到视图；
+actions：响应在 view 上的用户输入导致的状态变化。
+
+这是一个普通的组件从样式渲染到数据绑定再到数据变化，单一的状态比较清晰，遇到多个组件共享状态时，这种简洁性很容易被破坏且难以管理。因此，把组件的共享状态抽出来，以一个全局单例模式管理，这就是VUEX背后的基本思想。
+
+![](./assets/vuex.png)
+
