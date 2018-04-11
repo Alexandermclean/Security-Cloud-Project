@@ -8,7 +8,7 @@ emmmmm 今年2月1号开始的安全SASS云项目在上个月（3月31号）也�
 这次项目用的主要是VUE框架基于webpack、es6和node开发的环境，其中为了快速开发吧，用了一些iview的组件，自己也在iview提供的基础组件的基础上封装了几个功能性更强的组件。对于这次项目的总结我会每天写一点，当做记录吧，项目结束我会整理成几篇博文放到我的博客去。
 
 ## 1.路由（router）	
-这次采用的是分级的路由定义方式：
+这次采用的是分级的路由定义方式（具体关于[项目路由结构](https://github.com/Alexandermclean/Security-Cloud-Project#6项目结构)）：
 ```javascript
 import childRouter from '../../router'
 const parentPouter1 = {
