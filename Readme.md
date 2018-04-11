@@ -211,7 +211,7 @@ new Vue({
 
 ## 6.项目结构
 这部分应该是在刚开始写的，但忘了= =，现在补上吧。
-在说这次项目之前先说基于vue-cli搭建的项目结构各个文件的作用，我就从csdn上找了篇文章[点击此处](https://blog.csdn.net/qq_34543438/article/details/72868546?locationNum=3&fps=1)。光看这些个概念可能有点抽象，结合这次项目我用自己的理解解释一下；这次用的是嵌套显示，主要通过路由里的children属性设置，具体配置如下：
+在说这次项目之前先说基于vue-cli搭建的项目结构各个文件的作用，我就从csdn上找了篇文章（[点击此处](https://blog.csdn.net/qq_34543438/article/details/72868546?locationNum=3&fps=1)）。光看这些个概念可能有点抽象，结合这次项目我用自己的理解解释一下；这次用的是嵌套显示，主要通过路由里的children属性设置，具体配置如下：
 #### 1.入口html文件（index.html）
 ```bash
 <div id='app'></div>
