@@ -206,6 +206,7 @@ new Vue({
 这是一个普通的组件从样式渲染到数据绑定再到数据变化，单一的状态比较清晰，遇到多个组件共享状态时，这种简洁性很容易被破坏且难以管理。因此，把组件的共享状态抽出来，以一个全局单例模式管理，这就是VUEX背后的基本思想。
 
 ![](./assets/vuex.png)
+
 后续用完之后再来写: )
 
 ## 6.项目结构
@@ -248,7 +249,7 @@ const loginRouter = {
 const defindeRouter = { // 错误跳转页面路由
 	path:
 	name:
-	component: Main
+	component: Main // import Main from ...引入Main组件，设置children属性设置业务页面路由
 	children: [{...}]
 }
 const topbarRouter = { // top栏路由
@@ -277,6 +278,8 @@ export const routerConfig = [
 	defindeRouter,
 	...sidebarRouter // 解构
 ]
+
+//导出路由信息，在App.vue文件中引入
 ```
 #### 5.Main.vue（业务页面都挂载在下面）
 ```bash
@@ -289,4 +292,4 @@ export const routerConfig = [
 </template>
 ```
 
-综上所述，所有页面都显示在入口index.html的<div id='app'>里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的<router-view>路由视图显示,业务页面通过Main.vue的<router-view>的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
+综上所述，所有页面都显示在入口index.html的&lt;div id='app'&gt;里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的&lt;router-view&gt;路由视图显示,业务页面通过Main.vue的&lt;router-view&gt;的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
