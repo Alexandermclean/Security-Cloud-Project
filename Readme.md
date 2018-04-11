@@ -8,7 +8,7 @@ emmmmm 今年2月1号开始的安全SASS云项目在上个月（3月31号）也�
 这次项目用的主要是VUE框架基于webpack、es6和node开发的环境，其中为了快速开发吧，用了一些iview的组件，自己也在iview提供的基础组件的基础上封装了几个功能性更强的组件。对于这次项目的总结我会每天写一点，当做记录吧，项目结束我会整理成几篇博文放到我的博客去。
 
 ## 1.路由（router）	
-这次采用的是分级的路由定义方式（具体关于[项目路由结构](#6项目结构)）：
+这次采用的是分级的路由定义方式：
 ```javascript
 import childRouter from '../../router'
 const parentPouter1 = {
@@ -65,6 +65,7 @@ export default const router = new VueRouter({
 	routes: routerConfig
 })
 ```
+具体关于项目路由结构可以看第6项介绍。
 
 ## 2.封装组件
 在三月中旬开发的时候，被要求在主要业务的主页上添加一个详情的可收缩的弹框。需求很简单，但为了统一样式便于开发，采取了单独封装组件的方式。其中为了保证详情框和主页面内容高度一致，用到CSS变量的知识点（具体内容可以阅读[阮一峰CSS变量教程](http://www.ruanyifeng.com/blog/2017/05/css-variables.html)）。
