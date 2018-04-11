@@ -206,4 +206,87 @@ new Vue({
 这是一个普通的组件从样式渲染到数据绑定再到数据变化，单一的状态比较清晰，遇到多个组件共享状态时，这种简洁性很容易被破坏且难以管理。因此，把组件的共享状态抽出来，以一个全局单例模式管理，这就是VUEX背后的基本思想。
 
 ![](./assets/vuex.png)
+后续用完之后再来写: )
 
+## 6.项目结构
+这部分应该是在刚开始写的，但忘了= =，现在补上吧。
+在说这次项目之前先说基于vue-cli搭建的项目结构各个文件的作用，我就从csdn上找了篇文章[点击此处](https://blog.csdn.net/qq_34543438/article/details/72868546?locationNum=3&fps=1)。光看这些个概念可能有点抽象，结合这次项目我用自己的理解解释一下；这次用的是嵌套显示，主要通过路由里的children属性设置，具体配置如下：
+#### 1.入口html文件（index.html）
+```bash
+<div id='app'></div>
+<div id='version'>...</div> <!-- 检查浏览器版本 -->
+```
+#### 2.入口js文件（main.js）
+```javascript
+new Vue({
+	el: '#app',
+	router, // 引用router文件夹index.js
+	components: {App}, // 入口vue文件
+	template: '<App/>',
+	store: VuexStore // vuex原型
+})
+```
+#### 3.入口vue文件（App.vue）
+```javascript
+<template>
+	<div id='app'>
+		<router-view></router-view> <!-- 路由视图组件 -->
+	</div>
+<template>
+```
+#### 4.主路由（router/index.js）
+这次项目基于上面的<router-view>渲染分两个VUE文件：login.vue和Main.vue，下面会对这两个VUE文件做具体介绍。
+```javascript
+//登录页面路由信息
+const loginRouter = {
+	path:
+	name:
+	component: () => import(...)
+}
+
+//业务页面路由信息，都是挂载在Main.vue页面里，等同于入口vue的<router-view>
+const defindeRouter = { // 错误跳转页面路由
+	path:
+	name:
+	component: Main
+	children: [{...}]
+}
+const topbarRouter = { // top栏路由
+	path:
+	name:
+	component: Main
+	children: [{...}]
+}
+const sidebarRouter = [ // 具体各个业务页面路由
+	{
+		path:
+		name:
+		component: Main
+		children: [{...}]
+	},
+	{
+		path:
+		name:
+		component: Main
+		children: [{...}]
+	}
+]
+export const routerConfig = [
+	loginRouter,
+	topbarRouter,
+	defindeRouter,
+	...sidebarRouter // 解构
+]
+```
+#### 5.Main.vue（业务页面都挂载在下面）
+```bash
+<template>
+	<Header></Header>
+	<Content>
+		<router-view></router-view> // 联系上面的children路由信息，都通过这个路由视图显示
+	</Content>
+	<Footer></Footer>
+</template>
+```
+
+综上所述，所有页面都显示在入口index.html的<div id='app'>里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的<router-view>路由视图显示,业务页面通过Main.vue的<router-view>的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
