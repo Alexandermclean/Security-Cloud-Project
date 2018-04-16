@@ -213,12 +213,12 @@ new Vue({
 ## 6.项目结构
 这部分应该是在刚开始写的，但忘了= =，现在补上吧。
 在说这次项目之前先说基于vue-cli搭建的项目结构各个文件的作用，我就从csdn上找了篇文章（[点击此处](https://blog.csdn.net/qq_34543438/article/details/72868546?locationNum=3&fps=1)）。光看这些个概念可能有点抽象，结合这次项目我用自己的理解解释一下；这次用的是嵌套显示，主要通过路由里的children属性设置，具体配置如下：
-#### 1.入口html文件（index.html）
+### 1.入口html文件（index.html）
 ```bash
 <div id='app'></div>
 <div id='version'>...</div> <!-- 检查浏览器版本 -->
 ```
-#### 2.入口js文件（main.js）
+### 2.入口js文件（main.js）
 ```javascript
 new Vue({
 	el: '#app',
@@ -228,7 +228,7 @@ new Vue({
 	store: VuexStore // vuex原型
 })
 ```
-#### 3.入口vue文件（App.vue）
+### 3.入口vue文件（App.vue）
 ```javascript
 <template>
 	<div id='app'>
@@ -236,7 +236,7 @@ new Vue({
 	</div>
 <template>
 ```
-#### 4.主路由（router/index.js）
+### 4.主路由（router/index.js）
 这次项目基于上面的<router-view>渲染分两个VUE文件：login.vue和Main.vue，下面会对这两个VUE文件做具体介绍。
 ```javascript
 //登录页面路由信息
@@ -282,7 +282,7 @@ export const routerConfig = [
 
 //导出路由信息，在App.vue文件中引入
 ```
-#### 5.Main.vue（业务页面都挂载在下面）
+### 5.Main.vue（业务页面都挂载在下面）
 ```bash
 <template>
 	<Header></Header>
@@ -312,7 +312,7 @@ var server = app.listen(3030, function{
 })
 ```
 
-#### 1.基本路由和静态文件挂载
+### 1.基本路由和静态文件挂载
 常见的4个基本http请求：
 ```javascript
 // 对网站首页的访问返回 "Hello World!" 字样
@@ -346,7 +346,7 @@ app.use('/public', express.static('public'))
 // 存放虚拟目录，通过指定的挂载路径访问：http://localhost:3030/public/image/xx.png
 ```
 
-#### 2.路由
+### 2.路由
 路由是指如何定义应用的端点（URIs）以及如何响应客户端的请求。
 路由是由一个 URI、HTTP 请求（GET、POST等）和若干个句柄组成，它的结构如下： app.METHOD(path, [callback...], callback)， app 是 express 对象的一个实例， METHOD 是一个 HTTP 请求方法， path 是服务器上的路径， callback 是当路由匹配时要执行的函数。
 ```javascript
@@ -373,7 +373,7 @@ app.get(/.*fly$/, function(req, res) {
 });
 ```
 
-express.Router
+#### express.Router
 调用express()方法创建的Application(app)内部都创建了一个Router，大部分对 Application 的操作实际上都被重定向到了这个内部的Router上而已。而Application所做的，只不过是在这个Router的基础上添加了一些额外的便捷 API 而已。
 ```javascript
 var express = require('express');
@@ -402,9 +402,10 @@ app.use('/public', pub);
 // 应用即可处理发自 /public 和 /public/about 的请求，并且调用为该路由指定的 timeLog 中间件
 ```
 
-#### 3.中间件
+### 3.中间件
 中间件（Middleware）是一个函数，它可以访问请求对象（request object (req)），响应对象（response object (res)），和 web 应用中处于请求-响应循环流程中的中间件，一般被命名为 next 的变量。
 > 关于next()函数的解释，我找了一篇比较好的[文章](http://cnodejs.org/topic/5757e80a8316c7cb1ad35bab)
+
 中间件的功能包括：
 * 执行任何代码；
 * 修改请求和响应对象；
@@ -419,7 +420,7 @@ Express 应用可使用如下几种中间件：
 * 内置中间件
 * 第三方中间件
 
-##### 1.应用级中间件
+#### 1.应用级中间件
 应用级中间件绑定到**app对象**使用app.use()和app.METHOD()，其中METHOD是需要处理的HTTP请求的方法，例如GET, PUT, POST 等等，全部小写。例如：
 ```javascript
 var app = express();
@@ -485,7 +486,7 @@ app.get('/user/:id', function (req, res, next) {
   res.render('special');
 });
 ```
-##### 2.路由级中间件
+#### 2.路由级中间件
 路由级中间件和应用级中间件一样，只是它绑定的对象为 express.Router()。
 ```javascript
 var router = express.Router();
