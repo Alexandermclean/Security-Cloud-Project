@@ -349,7 +349,6 @@ app.use('/public', express.static('public'))
 #### 2.路由
 路由是指如何定义应用的端点（URIs）以及如何响应客户端的请求。
 路由是由一个 URI、HTTP 请求（GET、POST等）和若干个句柄组成，它的结构如下： app.METHOD(path, [callback...], callback)， app 是 express 对象的一个实例， METHOD 是一个 HTTP 请求方法， path 是服务器上的路径， callback 是当路由匹配时要执行的函数。
-> 关于next()函数的解释，我找了一篇比较好的[文章](http://cnodejs.org/topic/5757e80a8316c7cb1ad35bab)
 ```javascript
 // 对于上面的4种请求的句柄改用app.route()定义链式句柄
 app.route('/public')
@@ -402,3 +401,134 @@ var pub = require('js文件路径');
 app.use('/public', pub);
 // 应用即可处理发自 /public 和 /public/about 的请求，并且调用为该路由指定的 timeLog 中间件
 ```
+
+#### 3.中间件
+中间件（Middleware）是一个函数，它可以访问请求对象（request object (req)），响应对象（response object (res)），和 web 应用中处于请求-响应循环流程中的中间件，一般被命名为 next 的变量。
+> 关于next()函数的解释，我找了一篇比较好的[文章](http://cnodejs.org/topic/5757e80a8316c7cb1ad35bab)
+中间件的功能包括：
+* 执行任何代码；
+* 修改请求和响应对象；
+* 终结请求-响应循环；
+* 调用堆栈中的下一个中间件。
+如果当前中间件没有终结请求-响应循环，则必须调用 next()方法将控制权交给下一个中间件，否则请求就会挂起。
+
+Express 应用可使用如下几种中间件：
+* 应用级中间件
+* 路由级中间件
+* 错误处理中间件
+* 内置中间件
+* 第三方中间件
+
+##### 1.应用级中间件
+应用级中间件绑定到**app对象**使用app.use()和app.METHOD()，其中METHOD是需要处理的HTTP请求的方法，例如GET, PUT, POST 等等，全部小写。例如：
+```javascript
+var app = express();
+
+// 没有挂载路径的中间件，应用的每个请求都会执行该中间件
+app.use(function (req, res, next) {
+  console.log('Time:', Date.now());
+  next();
+});
+
+// 挂载至 /user/:id 的中间件，任何指向 /user/:id 的请求都会执行它
+app.use('/user/:id', function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+
+// 路由和句柄函数(中间件系统)，处理指向 /user/:id 的 GET 请求
+app.get('/user/:id', function (req, res, next) {
+  res.send('USER');
+});
+```
+下面这个例子展示了在一个挂载点装载一组中间件。
+```javascript
+// 一个中间件栈，对任何指向 /user/:id 的 HTTP 请求打印出相关信息
+app.use('/user/:id', function(req, res, next) {
+  console.log('Request URL:', req.originalUrl);
+  next();
+}, function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+```
+作为中间件系统的路由句柄，使得为路径定义多个路由成为可能。在下面的例子中，为指向 /user/:id 的 GET 请求定义了**两个路由**。第二个路由虽然不会带来任何问题，但却永远不会被调用，因为第一个路由已经终止了请求-响应循环。
+```javascript
+// 一个中间件栈，处理指向 /user/:id 的 GET 请求
+app.get('/user/:id', function (req, res, next) {
+  console.log('ID:', req.params.id);
+  next();
+}, function (req, res, next) {
+  res.send('User Info');
+});
+
+// 处理 /user/:id， 打印出用户 id
+app.get('/user/:id', function (req, res, next) {
+  res.end(req.params.id);
+});
+```
+如果需要在中间件栈中跳过剩余中间件，调用 next('route') 方法将控制权交给下一个路由。 注意： next('route') 只对使用 app.VERB() 或 router.VERB() 加载的中间件有效。
+```javascript
+// 一个中间件栈，处理指向 /user/:id 的 GET 请求
+app.get('/user/:id', function (req, res, next) {
+  // 如果 user id 为 0, 跳到下一个路由
+  if (req.params.id == 0) next('route');
+  // 否则将控制权交给栈中下一个中间件
+  else next(); //
+}, function (req, res, next) {
+  // 渲染常规页面
+  res.render('regular');
+});
+
+// 处理 /user/:id， 渲染一个特殊页面
+app.get('/user/:id', function (req, res, next) {
+  res.render('special');
+});
+```
+##### 2.路由级中间件
+路由级中间件和应用级中间件一样，只是它绑定的对象为 express.Router()。
+```javascript
+var router = express.Router();
+```
+路由级使用 router.use() 或 router.VERB() 加载。
+上述在应用级创建的中间件系统，可通过如下代码改写为路由级：
+```javascript
+var app = express();
+var router = express.Router();
+
+// 没有挂载路径的中间件，通过该路由的每个请求都会执行该中间件
+router.use(function (req, res, next) {
+  console.log('Time:', Date.now());
+  next();
+});
+
+// 一个中间件栈，显示任何指向 /user/:id 的 HTTP 请求的信息
+router.use('/user/:id', function(req, res, next) {
+  console.log('Request URL:', req.originalUrl);
+  next();
+}, function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+
+// 一个中间件栈，处理指向 /user/:id 的 GET 请求
+router.get('/user/:id', function (req, res, next) {
+  // 如果 user id 为 0, 跳到下一个路由
+  if (req.params.id == 0) next('route');
+  // 负责将控制权交给栈中下一个中间件
+  else next(); //
+}, function (req, res, next) {
+  // 渲染常规页面
+  res.render('regular');
+});
+
+// 处理 /user/:id， 渲染一个特殊页面
+router.get('/user/:id', function (req, res, next) {
+  console.log(req.params.id);
+  res.render('special');
+});
+
+// 将路由挂载至应用
+app.use('/', router);
+```
+> 路由级中间件和非路由级中间件的第三个参数next不是同一个next，功能上基本相同。
