@@ -294,3 +294,111 @@ export const routerConfig = [
 ```
 
 综上所述，所有页面都显示在入口index.html的&lt;div id='app'&gt;里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的&lt;router-view&gt;路由视图显示,业务页面通过Main.vue的&lt;router-view&gt;的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
+
+## 7.路由分发
+由于项目开发的深入，为了配合设备层的配置下发，后台开始着手core层的接口，也就是说不完全针对页面显示的数据接口；这种情况下需要前台对接口进行路由分发，对于后台给出的接口改构和包装，达到页面显示需要的数据结构的接口，这次用的是nodejs的express框架，在应用到项目前，这里算是学习笔记和感想。
+一个基本的express应用的结构：
+```javascript
+var express = require('express') // 安装node的时候回自动安装express
+var app = express()
+
+app.get('/', (req,res) => { // req(请求)和res(响应)与Node提供的对象完全一致
+	res.send('监听3030端口进入的所有get请求')		
+})
+var server = app.listen(3030, function{
+	var host = server.address().address
+  	var port = server.address().port
+  	console.log('Example app listening at http://%s:%s', host, port)
+})
+```
+
+#### 1.基本路由和静态文件挂载
+常见的4个基本http请求：
+```javascript
+// 对网站首页的访问返回 "Hello World!" 字样
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+// 网站首页接受 POST 请求
+app.post('/', function (req, res) {
+  res.send('Got a POST request');
+});
+
+// /user 节点接受 PUT 请求
+app.put('/user', function (req, res) {
+  res.send('Got a PUT request at /user');
+});
+
+// /user 节点接受 DELETE 请求
+app.delete('/user', function (req, res) {
+  res.send('Got a DELETE request at /user');
+});
+```
+利用express托管静态文件（express.static中间件）
+```javascript
+app.use(express.static('public'))
+
+// 通过http://localhost:3030/image/xx.png访问
+// 多个目录按照添加顺序查找
+
+app.use('/public', express.static('public'))
+// 存放虚拟目录，通过指定的挂载路径访问：http://localhost:3030/public/image/xx.png
+```
+
+#### 2.路由
+路由是指如何定义应用的端点（URIs）以及如何响应客户端的请求。
+路由是由一个 URI、HTTP 请求（GET、POST等）和若干个句柄组成，它的结构如下： app.METHOD(path, [callback...], callback)， app 是 express 对象的一个实例， METHOD 是一个 HTTP 请求方法， path 是服务器上的路径， callback 是当路由匹配时要执行的函数。
+> 关于next()函数的解释，我找了一篇比较好的[文章](http://cnodejs.org/topic/5757e80a8316c7cb1ad35bab)
+```javascript
+// 对于上面的4种请求的句柄改用app.route()定义链式句柄
+app.route('/public')
+	.get((req,res) => {
+		...
+	})
+	.post((req,res) => {
+		...
+	})
+	.put((req,res) => {
+		...
+	});
+// 监听来自/public的所有请求
+app.all('/public', function(req,res,next){
+	...
+	next();
+})
+// 路由匹配
+// 匹配 butterfly、dragonfly，不匹配 butterflyman、dragonfly man等
+app.get(/.*fly$/, function(req, res) {
+  	res.send('/.*fly$/');
+});
+```
+
+express.Router
+调用express()方法创建的Application(app)内部都创建了一个Router，大部分对 Application 的操作实际上都被重定向到了这个内部的Router上而已。而Application所做的，只不过是在这个Router的基础上添加了一些额外的便捷 API 而已。
+```javascript
+var express = require('express');
+var router = express.Router();
+
+// 该路由使用的中间件
+router.use(function timeLog(req, res, next) {
+  console.log('Time: ', Date.now());
+  next();
+});
+// 定义网站主页的路由
+router.get('/', function(req, res) {
+  res.send('Birds home page');
+});
+// 定义 about 页面的路由
+router.get('/about', function(req, res) {
+  res.send('About public');
+});
+
+module.exports = router;
+
+// 在应用中加载路由模块
+var pub = require('js文件路径');
+...
+app.use('/public', pub);
+// 应用即可处理发自 /public 和 /public/about 的请求，并且调用为该路由指定的 timeLog 中间件
+```
