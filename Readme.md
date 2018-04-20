@@ -228,7 +228,7 @@ new Vue({
 	store: VuexStore // vuex原型
 })
 ```
-> 注释：也就是说:template: '<App/>' 表示用<app></app>替换index.html里面的<div id="app"></div>
+> 注释：也就是说:template: '&lt;App/&gt;' 表示用&lt;app&gt;&lt;/app&gt;替换index.html里面的&lt;div id="app"&gt;&lt;/div&gt;
 ### 3.入口vue文件（App.vue）
 ```javascript
 <template>
