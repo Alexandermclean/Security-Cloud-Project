@@ -224,10 +224,11 @@ new Vue({
 	el: '#app',
 	router, // 引用router文件夹index.js
 	components: {App}, // 入口vue文件
-	template: '<App/>',
+	template: '<App/>', // 模板将会替换挂载的元素，挂载元素的内容都将被忽略（看下面注释）
 	store: VuexStore // vuex原型
 })
 ```
+> 注释：也就是说:template: '<App/>' 表示用<app></app>替换index.html里面的<div id="app"></div>
 ### 3.入口vue文件（App.vue）
 ```javascript
 <template>
@@ -293,7 +294,7 @@ export const routerConfig = [
 </template>
 ```
 
-综上所述，所有页面都显示在入口index.html的&lt;div id='app'&gt;里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的&lt;router-view&gt;路由视图显示,业务页面通过Main.vue的&lt;router-view&gt;的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
+综上所述，所有页面都显示在入口index.html的&lt;div id='app'&gt;里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的&lt;router-view&gt;路由视图显示，业务页面通过Main.vue的&lt;router-view&gt;的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
 
 ## 7.路由分发
 由于项目开发的深入，为了配合设备层的配置下发，后台开始着手core层的接口，也就是说不完全针对页面显示的数据接口；这种情况下需要前台对接口进行路由分发，对于后台给出的接口改构和包装，达到页面显示需要的数据结构的接口，这次用的是nodejs的express框架，在应用到项目前，这里算是学习笔记和感想。
