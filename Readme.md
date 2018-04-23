@@ -534,3 +534,102 @@ router.get('/user/:id', function (req, res, next) {
 app.use('/', router);
 ```
 > 路由级中间件和非路由级中间件的第三个参数next不是同一个next，功能上基本相同。
+#### 3.错误处理中间件
+>错误处理中间件有 4 个参数，定义错误处理中间件时必须使用这4个参数（4个参数是next(err)执行判断的标识）。即使不需要next对象，也必须在签名中声明它，否则中间件会被识别为一个常规中间件，不能处理错误。
+```javascript
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+```
+具体关于错误处理中间件的介绍可以参考[官方文档](http://www.expressjs.com.cn/guide/error-handling.html)
+#### 4.内置中间件
+express.static是Express唯一的内置中间件。它基于serve-static，负责在Express应用中托管静态资源。
+最常用的用法在上面已经介绍过了，关于更细节的参数可参考[官方文档](http://www.expressjs.com.cn/guide/using-middleware.html#middleware.built-in)
+
+## 8.关于Express应用项目实践
+上面说了很多概念性的内容，这部分就针对这次项目来说具体应用。这次后台整体下移，也就是从之前写java的portal层接口下移到对接设备的core层接口，出于安全性考虑，前台不能直接访问core层接口，需要用node在中间连接（认证部分这次用的casClient后面再细说）。主要的三个需求是接口转发、静态资源挂载，还有个服务器端口跳转；下面我会针对这三个需求说一下实现的过程吧 : )
+这是主要require的几个模块：
+```javascript
+var express = require('express')
+var proxy = require('http-proxy-middleware')
+var request = require('request')
+var bodyParser = require('body-parser')
+var path = require('path')
+var history = require('connect-history-api-fallback')
+```
+### 1.接口转发
+这部分是node实现的最基本要求，即前台调用express定义的前台接口，再由中间件向core层调用对应的接口取数据。
+```javascript
+// 前台调用接口
+this.$axios({
+	method: 'GET',
+	url: 'http://127.60.0.1:3000/yuhui'
+}).then(r=>{
+	console.log(r.data)
+})
+
+//express捕获到做匹配
+var app = express()
+app.use('/yuhui', function(req,res,next){
+	// 向core层请求数据
+	res.jsonp(obj) // 返回给前台
+})
+
+app.listen(3000,'127.60.0.2')
+```
+### 2.静态资源挂载
+这个需求是为了用docker容器集成到主系统时，为了减少对接模块调试方便（vue+node+nginx到vue+node），就对前端的静态资源调用放到express来做。挂载静态资源是针对于build之后用于生产环境下的dist文件夹资源的调用，而不是开发环境的入口html，这个要注意哈！
+```javascript
+app.use(express.static('../dist'))
+app.listen(3000,'127.60.0.2') //浏览器访问127.60.0.2:3000就可以访问项目了
+```
+这样挂载的项目路径中会带有一个#，这是因为router默认采用hash模式，因此要对router做一下修改：
+```javascript
+export default new Router({
+  mode: 'history', //修改路由模式
+  routes: [
+    {
+        path: '/',
+        component: Index
+    },{
+    	path: '/content/:id',
+    	component: Content
+    },{
+    	path: '/viewPage',
+    	component: ViewPage
+    }
+  ]
+})
+```
+但是这样做又会带来一个问题，这样的访问是针对于文件夹的静态资源路径而不是我们在开发环境中做的路由路径，会匹配不到资源返回404；所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面（也就是从主页面重进再按照路由的路径显示页面），这个页面就是你 app 依赖的页面。当然这个要自己写一个node处理的中间件可以，不过npm这么好的社区不用就很浪费:)
+> npm install --save connect-history-api-fallback，[源码](https://github.com/bripkens/connect-history-api-fallback)在github上，有兴趣的同学可以去研究下，然后express可以以第三方中间件的形式使用，很方便。这里在附上官网的[各种解决办法](https://router.vuejs.org/zh-cn/essentials/history-mode.html)
+```javascript
+var history = require('connect-history-api-fallback')
+app.use(history()) //注意顺序！这个中间件的使用要放在挂载静态资源之前
+```
+### 3.服务器端口跳转
+这个需求呢是我撸码的时候自己提的= =使用环境就是服务器的一个端口挂了，可以跳转到另一个端口，相当于备用；利用http-proxy-middleware模块起一个代理服务器，用于转发端口或者IP。
+```javascript
+var proxy = require('http-proxy-middleware')
+app.use('/yuhui', proxy({
+    target: 'http://127.60.0.2:1234',
+    changeOrigen: true,
+    onProxyRes: function(proxyRes,req,res){
+        res.header("Access-Control-Allow-Origin", "*");  
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, content-type");  
+        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+        res.header("X-Powered-By",' 3.2.1')  
+        res.header("Content-Type", "application/json;charset=utf-8");  
+    },
+    cookieDomainRewrite: '' // 修改响应信息中的cookie域名，可以为false
+}))
+
+app2.use('/yuhui', function(req,res,next){
+	res.send('yuhui')
+})
+app.listen(3000,'127.60.0.2') // 代理服务器端口
+app2.listen(1234,'127.60.0.2')
+```
+
+做完这几个需求，感触比较深的是：基于node开发要有一种模块化和社区的概念，这样无论是执行效率还是开发效率都会有很高的提升。（模块引用和中间件加载太舒服了~）
