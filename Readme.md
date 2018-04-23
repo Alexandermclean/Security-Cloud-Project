@@ -610,7 +610,7 @@ var history = require('connect-history-api-fallback')
 app.use(history()) //注意顺序！这个中间件的使用要放在挂载静态资源之前
 ```
 ### 3.服务器端口跳转
-这个需求呢是我撸码的时候自己提的= =使用环境就是服务器的一个端口挂了，可以跳转到另一个端口，相当于备用；利用http-proxy-middleware模块起一个代理服务器，用于转发端口或者IP。
+这个需求呢是我撸码的时候自己提的= =使用环境就是服务器的一个端口挂了，可以跳转到另一个端口，相当于备用；利用http-proxy-middleware模块起一个代理服务器，用于转发端口或者IP+端口。
 ```javascript
 var proxy = require('http-proxy-middleware')
 app.use('/yuhui', proxy({
