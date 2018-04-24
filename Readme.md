@@ -298,6 +298,7 @@ export const routerConfig = [
 
 ## 7.路由分发
 由于项目开发的深入，为了配合设备层的配置下发，后台开始着手core层的接口，也就是说不完全针对页面显示的数据接口；这种情况下需要前台对接口进行路由分发，对于后台给出的接口改构和包装，达到页面显示需要的数据结构的接口，这次用的是nodejs的express框架，在应用到项目前，这里算是学习笔记和感想。
+
 一个基本的express应用的结构：
 ```javascript
 var express = require('express') // 安装node的时候回自动安装express
