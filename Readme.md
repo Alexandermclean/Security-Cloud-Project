@@ -605,10 +605,20 @@ export default new Router({
 })
 ```
 但是这样做又会带来一个问题，这样的访问是针对于文件夹的静态资源路径而不是我们在开发环境中做的路由路径，会匹配不到资源返回404；所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面（也就是从主页面重进再按照路由的路径显示页面），这个页面就是你 app 依赖的页面。当然这个要自己写一个node处理的中间件可以，不过npm这么好的社区不用就很浪费: )
-> npm install --save connect-history-api-fallback，[源码](https://github.com/bripkens/connect-history-api-fallback)在github上，有兴趣的同学可以去研究下，然后express可以以第三方中间件的形式使用，很方便。这里在附上官网的[其他解决办法](https://router.vuejs.org/zh-cn/essentials/history-mode.html)
+> npm install --save connect-history-api-fallback，[源码](https://github.com/bripkens/connect-history-api-fallback)在github上，有兴趣的同学可以去研究下，然后express可以以第三方中间件的形式使用，很方便。这里在附上官网的[其他解决办法](https://router.vuejs.org/zh-cn/essentials/history-mode.html)，assetsPublicPath路径[配置解释](https://www.cnblogs.com/resolvent/p/5736678.html)
 ```javascript
 var history = require('connect-history-api-fallback')
 app.use(history()) //注意顺序！这个中间件的使用要放在挂载静态资源之前
+
+build: {
+  // Template for index.html
+    index: path.resolve(__dirname, '../dist/index.html'),
+
+  // Paths
+    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',  
+    //因为history默认会修改根目录，未配置前是相对路径；所以在webpack build命令配置需要修改成'/'，保证根目录不变，具体解释点上面链接
 ```
 ### 3.服务器端口跳转
 这个需求呢是我撸码的时候自己提的= =使用环境就是服务器的一个端口挂了，可以跳转到另一个端口，相当于备用；利用http-proxy-middleware模块起一个代理服务器，用于转发端口或者IP+端口。
