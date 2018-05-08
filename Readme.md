@@ -619,6 +619,7 @@ build: {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',  
     //因为history默认会修改根目录，未配置前是相对路径；所以在webpack build命令配置需要修改成'/'，保证根目录不变，具体解释点上面链接
+}
 ```
 ### 3.服务器端口跳转
 这个需求呢是我撸码的时候自己提的= =使用环境就是服务器的一个端口挂了，可以跳转到另一个端口，相当于备用；利用http-proxy-middleware模块起一个代理服务器，用于转发端口或者IP+端口。
