@@ -646,3 +646,36 @@ app2.listen(1234,'127.60.0.2')
 ```
 
 做完这几个需求，感触比较深的是：基于node开发要有一种模块化和社区的概念，这样无论是执行效率还是开发效率都会有很高的提升。（模块引用和中间件加载太舒服了~）
+
+## 9.基于casServer的登录认证
+
+### 1.cas server + cas client 单点登录原理介绍
+为了集成到cloudOS系统上需要对现在的项目做单点登录（保持单账号登录所有系统），打算用casServer做单点登录和权限控制以及用docker部署，关于docker的部分我后面研究完了在写上来吧:)
+从结构上看，CAS 包含两个部分： CAS Server 和 CAS Client。CAS Server需要独立部署，主要负责对用户的认证工作；CAS Client负责处理对客户端受保护资源的访问请求，需要登录时，重定向到 CAS Server。
+
+CAS基础协议
+![](./assets/casServer1.jpg)
+
+CAS的详细登录流程
+![](./assets/casServer2.jpg)
+> 关于cas的详细介绍，我也是从这两篇文章上了解的：[CAS基础协议](https://blog.csdn.net/feng27156/article/details/38060099)和[CAS的详细流程](http://htmlwww.cnblogs.com/lihuidu/p/6495247.html)
+
+### 2.配置介绍
+这次项目呢，我主要做的就是casClient部分的逻辑，作为客户端和casServer的中间件，在不同情况下的重定向操作对于系统正常运行有很大影响，但考虑到客户端、casClient和casServer之间的数据交换和本地ticket验证等复杂的逻辑，可以考虑用npm安装合适的基于node的casClient，再做一些基本的配置即可。
+> 这次用的是connect-cas2模块，npm官网上的[配置](https://www.npmjs.com/package/connect-cas2)介绍是英文的，看着不太方便，附上[中文版](https://github.com/TencentWSRD/connect-cas2/blob/master/README.zh.md)的吧，这里列出几个比较重要的属性：
+```javascript
+var ConnectCas = require('connect-cas2')
+var casClient = new ConnectCae({
+	servicPrefix: // 网站根目录
+	serverPath: // casServer根路径，会和paths.serviceValidate拼接成casServer校验ticket路径
+	paths: {
+		validate: // 用于Client端校验ST路径，就是cas-connect2这个模块本地验证ST的js文件
+		serviceValidate: // 用于casServer校验ticket路径
+		login: // 会和serverPath拼接组成CAS的登录页面
+		logout: // 注销路径
+		...
+	}
+	...
+})
+app.use(casClient.core()) // 顺序要在bodyPaser之前
+```
