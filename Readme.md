@@ -654,9 +654,11 @@ app2.listen(1234,'127.60.0.2')
 从结构上看，CAS 包含两个部分： CAS Server 和 CAS Client。CAS Server需要独立部署，主要负责对用户的认证工作；CAS Client负责处理对客户端受保护资源的访问请求，需要登录时，重定向到 CAS Server。
 
 CAS基础协议
+
 ![](./assets/casServer1.jpg)
 
 CAS的详细登录流程
+
 ![](./assets/casServer2.jpg)
 > 关于cas的详细介绍，我也是从这两篇文章上了解的：[CAS基础协议](https://blog.csdn.net/feng27156/article/details/38060099)和[CAS的详细流程](http://htmlwww.cnblogs.com/lihuidu/p/6495247.html)
 
@@ -679,3 +681,5 @@ var casClient = new ConnectCae({
 })
 app.use(casClient.core()) // 顺序要在bodyPaser之前
 ```
+
+## 10.
