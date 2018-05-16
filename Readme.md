@@ -791,6 +791,7 @@ this.yPromise(1000)
 
 ```
 运行结果：
+
 ![](./assets/promise_1.PNG)
 
 ### 2.箭头函数
