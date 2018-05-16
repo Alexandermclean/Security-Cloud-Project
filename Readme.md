@@ -682,4 +682,115 @@ var casClient = new ConnectCae({
 app.use(casClient.core()) // 顺序要在bodyPaser之前
 ```
 
-## 10.
+## 10.ES6使用小结
+这部分呢打算对项目中用到的ES6语法做个小总结吧: )仅是对项目使用的部分做记录，有兴趣的可以去看看阮一峰的[EMAScript 6 入门](http://es6.ruanyifeng.com/)
+### 1.promise
+Promise是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6 将其写进了语言标准，统一了用法，原生提供了Promise对象。
+所谓Promise，简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果。从语法上说，Promise 是一个对象，从它可以获取异步操作的消息。Promise 提供统一的 API，各种异步操作都可以用同样的方法进行处理。
+#### 基本用法
+```javascript
+// 创建promise实例
+const promise = new Promise(function(resolve, reject) {
+  // ... some code
+  if (/* 异步操作成功 */){
+    resolve(value);
+  } else {
+    reject(error);
+  }
+});
+
+// Promise实例生成以后，可以用then方法分别指定resolved状态和rejected状态的回调函数。
+promise.then(function(value) {
+  // success
+}, function(error) {
+  // failure
+});
+
+```
+#### 2.举两个栗子吧
+```javascript
+// 简单操作
+function timeout(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms, 'done'); // 第三个参数会作为resolve函数的参数使用
+  });
+}
+
+timeout(100).then((value) => {
+  console.log(value); // 打印done
+});	
+
+// 稍复杂操作
+const getJSON = function(url) {
+  const promise = new Promise(function(resolve, reject){
+    const handler = function() {
+      if (this.readyState !== 4) {
+        return;
+      }
+      if (this.status === 200) {
+        resolve(this.response); 
+      } else {
+        reject(new Error(this.statusText)); // 分类进不同的回调
+      }
+    };
+    const client = new XMLHttpRequest();
+    client.open("GET", url);
+    client.onreadystatechange = handler;
+    client.responseType = "json";
+    client.setRequestHeader("Accept", "application/json");
+    client.send();
+
+  });
+
+  return promise; // 返回promise对象是继续回调的关键
+};
+
+getJSON("/posts.json").then(function(json) {
+  console.log('Contents: ' + json);
+}, function(error) {
+  console.error('出错了', error);
+});
+```
+> promise新建后会执行some code的代码块，再执行后面的代码，最后执行resolve和reject的部分
+#### 3.链式回调，避免回调地狱
+多层的回调看起来十分不美观而且不易数据维护，在js中引入链式操作会变得优雅很多。
+```javascript
+yPromise(value){
+	return new Promise(function(resolve, reject){
+		setTimeout(function(){
+			if(value == 1002){
+				resolve(value+1)
+			}
+			else {
+				reject('yuhui')
+			}
+		},value)
+	})
+}
+
+
+this.yPromise(1000)
+  .catch(function(err){ // 调用resolve或reject并不会终结 Promise 的参数函数的执行。
+	console.log(err)
+	// return Promise.resolve(1000)
+	return Promise.reject(2000) // 要想继续回调必须返回一个promise对象
+}).catch(function(err){
+	console.log(err)
+	return Promise.resolve(1000)
+}).then(function(res){
+	console.log(res)
+	// var res2 = res + 1000
+	// return new Promise(function(resolve, reject){
+	// 	resolve(res2)
+	// })
+	return Promise.resolve(res+1000) //等价于上面的写法
+}).then(function(res){
+	console.log(res)
+	return Promise.resolve(res+1000)
+})
+
+```
+运行结果：
+![](./assets/promise_1.png)
+
+### 2.箭头函数
