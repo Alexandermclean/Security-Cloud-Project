@@ -8,6 +8,23 @@ emmmmm 今年2月1号开始的安全SASS云项目在上个月（3月31号）也�
 这次项目用的主要是VUE框架基于webpack、es6和node开发的环境，其中为了快速开发吧，用了一些iview的组件，自己也在iview提供的基础组件的基础上封装了几个功能性更强的组件。对于这次项目的总结我会每天写一点，当做记录吧，项目结束我会整理成几篇博文放到我的博客去。
 
 ## 1.路由（router）	
+在说项目路由前，可以先看看vue官方给出的[vue-router](https://router.vuejs.org/zh-cn/essentials/getting-started.html)的介绍，我也会列出一些稍微需要注意的点：
+### 1.动态路由参数
+用于不同ID的用户都需使用同一个组件渲染
+```javascript
+const User = {
+  template: '<div>User</div>'
+}
+
+const router = new VueRouter({
+  routes: [
+    // 动态路径参数 以冒号开头
+    { path: '/user/:id', component: User }
+  ]
+})
+```
+> 像 /user/foo 和 /user/bar 都将映射到相同的路由。一个『路径参数』使用冒号 : 标记。当匹配到一个路由时，参数值会被设置到 this.$route.params，可以在每个组件内使用。其中params靠this.$router.push(name or path, params: {id: xx})方法传递，也可以多段设置路由参数：模式:/user/: username/post/:post_id => 匹配路径: /user/evan/post/123 => $route.params: { username: 'evan', post_id: 123 }
+### 2.结合项目
 这次采用的是分级的路由定义方式：
 ```javascript
 import childRouter from '../../router'
