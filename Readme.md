@@ -814,3 +814,13 @@ this.yPromise(1000)
 ![](./assets/promise_1.PNG)
 
 ### 2.箭头函数
+待续。。。: p
+
+## 11.基于token的登录认证
+主要从sessions、cookies和token来说 
+待续。。。: p
+
+## 12.VUE源码笔记
+[源码链接](https://github.com/Alexandermclean/vue/blob/dev/src/core/instance)
+> 在看源码前需要先了解一下强类型模板类的js语言，类似typescript或是flow，vue2.0就是用flow写的（原因[链接](https://www.zhihu.com/question/46397274)）个人看完之后觉得flow好用一点，轻量不干预源码。
+
