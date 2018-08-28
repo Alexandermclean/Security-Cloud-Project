@@ -316,6 +316,21 @@ export const routerConfig = [
 综上所述，所有页面都显示在入口index.html的&lt;div id='app'&gt;里，main.js创建VUE实例，login和Main作为两个主vue文件，通过App.vue文件的&lt;router-view&gt;路由视图显示，业务页面通过Main.vue的&lt;router-view&gt;的路由视图显示，利用路由children属性把页面挂载在Main.vue上。
 
 ## 7.路由分发
+```javascript
+/*
+	Apache请求数据库的代码
+*/
+res = db.query('SELECT * from some_table')
+res.output()
+
+/*
+	Nodejs请求数据库的代码
+*/
+db.query('SELECT * from some_table', function(res){
+	res.output()
+})
+```
+
 由于项目开发的深入，为了配合设备层的配置下发，后台开始着手core层的接口，也就是说不完全针对页面显示的数据接口；这种情况下需要前台对接口进行路由分发，对于后台给出的接口改构和包装，达到页面显示需要的数据结构的接口，这次用的是nodejs的express框架，在应用到项目前，这里算是学习笔记和感想。
 
 一个基本的express应用的结构：
@@ -824,3 +839,43 @@ this.yPromise(1000)
 [源码链接](https://github.com/Alexandermclean/vue/blob/dev/src/core/instance)
 > 在看源码前需要先了解一下强类型模板类的js语言，类似typescript或是flow，vue2.0就是用flow写的（原因[链接](https://www.zhihu.com/question/46397274)）个人看完之后觉得flow好用一点，轻量不干预源码。
 
+## 13.vue+nodejs+webpack环境搭建
+### 1.vue-cli搭建框架
+vue init webpack xxx--cd xxx--npm install
+### 2.nodejs启动dev
+新建一个webpack_server.js的配置文件，从webpack.base.conf.js和webpack.dev.conf.js中选择相应的配置代码
+主要是：entry、output、module和plugins这四个对象，其中entry是输入，webpack会将输入的文件及在其中导入的文件一起打包；output是输出，指定输出文件的目录，文件名等；module是预处理方式，webpack只能处理js文件，还有很多其他类型的文件，如css，图片，typescript，sass等文件，为了使webpack能顺利打包，那就需要预处理一下；plugins顾名思义就是提供一些额外的功能，相当于插件例如inject：插入output资源特定的位置，可以为head，body等，minify：压缩html文件。
+主要涉及的文件：build下的webpack.base.conf.js和webpack.dev.conf.js、config/index.js、package.json和main.js，列一下关于配置中比较重要的几个点：
+1.npm express后，在根目录下创建一个server文件夹，在里面新建一个node的启动文件app.js
+2.app.js中主要用'webpack-dev-middleware'模块打包运行dev，用webpack-hot-middleware实现修改文件后的热加载（除express文件外），对于express文件修改的热加载可以用nodemon实现，个人感觉nodemon和webpack-hot-middleware配合可以让项目调试起来很方便。
+```javascript
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const webpackConfig = require('../build/webpack-server.js');
+const webpack = require('webpack');
+const compiler = webpack(webpackConfig);
+
+if (setting.webpack.isWebpackDev){
+	app.use(webpackDevMiddleware(compiler,{
+		publicPath: webpackConfig.output.publicPath,
+    	noInfo: true
+	}));
+	app.use(webpackHotMiddleware(compiler));
+}
+```
+3.当express侦听某个接口时，输入的路径是“/”或“/index.html”这种默认路径时，需要用中间件拦截指向启动后的dev的html入口文件，即打包后根目录下的dist/index.html
+```javascript
+var DIST_DIR = path.join(__dirname, '../', 'dist')
+app.get(["/", "/index.html"], (req, res, next) =>{
+  const filename = path.join(DIST_DIR, 'index.html');
+  compiler.outputFileSystem.readFile(filename, (err, result) =>{
+    if(err){
+        return(next(err))
+    }
+    res.set('content-type', 'text/html')
+    res.send(result)
+    res.end()
+  })
+})
+```
+4.webpack打包的配置文件设置，webpack(webpackConfig)这一步就是用配置文件创建一个用来传给webpack-middle-ware的对象，主要修改了entry和plugins，entry添加webpack-hot-middleware/client入口和plugins添加热加载的插件new webpack.optimize.OccurrenceOrderPlugin()和new webpack.HotModuleReplacementPlugin()。
