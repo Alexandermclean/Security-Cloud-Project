@@ -10,6 +10,8 @@
         >
           Core Docs
         </a>
+        <span>{{this.name}}</span>
+        <Icon type='ios-search'></Icon>
       </li>
       <li>
         <a
@@ -88,8 +90,13 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      name: ''
     }
+  },
+  created () {
+    this.name = this.$store.getters.getName
+    console.log(this.name)
   }
 }
 </script>

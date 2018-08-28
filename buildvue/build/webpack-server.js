@@ -11,7 +11,7 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
 function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+  return path.join(__dirname, '../', dir)
 }
 
 const createLintingRule = () => ({
@@ -80,6 +80,9 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
       }
     ]
   },

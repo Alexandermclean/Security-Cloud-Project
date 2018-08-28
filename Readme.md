@@ -884,3 +884,79 @@ app.get(["/", "/index.html"], (req, res, next) =>{
 
 正常启动命令，也可以在package.json的scripts里面自定义一个启动命令：
 ![](./assets/nodemon.PNG)
+
+### 3.集成插件和工具
+1.vuex 
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+import vuexStore from './store/index'
+Vue.use(Vuex)
+
+new Vue({
+  store: vuexStore
+})
+
+// store 结构 index.js和modules文件夹
+// index.js
+import Vue from 'vue'
+import Vuex from 'vuex'
+import common from './modules/common'
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+	modules: {
+		common: common
+	}
+})
+
+export default store
+
+// modules/common.js
+const state = {
+	name: 'WAF'
+}
+const getters = {
+	getName: state => state.name
+}
+const mutations = {
+	
+}
+const actions = {
+	
+}
+
+export default {
+	// namespaced: true,  // 命名空间问题TODO
+	state,
+	getters,
+	mutations,
+	actions
+}
+
+```
+
+2.axios 
+```javascript
+import axios from './api/axios'
+Vue.prototype.$axios = axios
+
+// api/axios
+import axios from 'axios'
+
+axios.defaults.timeout = 5000
+axios.defaults.headers = Object.assign(axios.defaults.headers, {'Cache-Control': 'no-cache'})
+
+export default axios
+```
+3.iview 
+```javascript
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
+Vue.use(iView)
+
+// 需要在webpack配置文件中的module.rules添加css、postcss、less等规则
+{
+	utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
+}
+```

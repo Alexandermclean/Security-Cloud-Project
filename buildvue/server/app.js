@@ -62,7 +62,7 @@ app.get(["/", "/index.html"], (req, res, next) =>{
 // });
 
 // 监听
-app.listen(9291, function () {
+app.listen(9292, function () {
   console.log('success listen...9090');
 });
 
