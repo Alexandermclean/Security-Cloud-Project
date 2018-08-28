@@ -28,7 +28,7 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: ["webpack-hot-middleware/client", './src/main.js'],
+    app: ["webpack-hot-middleware/client", "babel-polyfill", "./src/main.js"],
   },
   output: {
     path: config.build.assetsRoot,
