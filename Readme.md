@@ -845,8 +845,10 @@ vue init webpack xxx--cd xxx--npm install
 ### 2.nodejs启动dev
 新建一个webpack_server.js的配置文件，从webpack.base.conf.js和webpack.dev.conf.js中选择相应的配置代码
 主要是：entry、output、module和plugins这四个对象，其中entry是输入，webpack会将输入的文件及在其中导入的文件一起打包；output是输出，指定输出文件的目录，文件名等；module是预处理方式，webpack只能处理js文件，还有很多其他类型的文件，如css，图片，typescript，sass等文件，为了使webpack能顺利打包，那就需要预处理一下；plugins顾名思义就是提供一些额外的功能，相当于插件例如inject：插入output资源特定的位置，可以为head，body等，minify：压缩html文件。
+
 主要涉及的文件：build下的webpack.base.conf.js和webpack.dev.conf.js、config/index.js、package.json和main.js，列一下关于配置中比较重要的几个点：
 1.npm express后，在根目录下创建一个server文件夹，在里面新建一个node的启动文件app.js
+
 2.app.js中主要用'webpack-dev-middleware'模块打包运行dev，用webpack-hot-middleware实现修改文件后的热加载（除express文件外），对于express文件修改的热加载可以用nodemon实现，个人感觉nodemon和webpack-hot-middleware配合可以让项目调试起来很方便。
 ```javascript
 const webpackDevMiddleware = require('webpack-dev-middleware');
