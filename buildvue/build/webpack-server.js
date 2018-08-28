@@ -42,6 +42,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      '~': resolve('static')
     }
   },
   module: {
@@ -82,7 +83,7 @@ module.exports = {
         }
       },
       {
-        utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
+        rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
       }
     ]
   },

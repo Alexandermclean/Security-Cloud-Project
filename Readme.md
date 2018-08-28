@@ -957,6 +957,6 @@ Vue.use(iView)
 
 // 需要在webpack配置文件中的module.rules添加css、postcss、less等规则
 {
-	utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
+	rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
 }
 ```

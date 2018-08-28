@@ -7,13 +7,16 @@ import Vuex from 'vuex'
 import axios from './api/axios'
 import vuexStore from './store/index'
 import iView from 'iview'
+import echart from 'echarts'
 import $ from 'jquery'
 import 'iview/dist/styles/iview.css'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+Vue.prototype.$echarts = echart
 Vue.use(Vuex)
 Vue.use(iView)
+
 if (module.hot) {  
  module.hot.accept();
 }

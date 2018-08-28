@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <img src="../assets/logo.png">
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -11,7 +12,10 @@
           Core Docs
         </a>
         <span>{{this.name}}</span>
-        <Icon type='ios-search'></Icon>
+        <Icon type='ios-search' @click='iconClick'></Icon>
+        <Modal v-model='modalShow'>
+          <span>yuhui</span>
+        </Modal>
       </li>
       <li>
         <a
@@ -91,7 +95,13 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      name: ''
+      name: '',
+      modalShow: false
+    }
+  },
+  methods: {
+    iconClick () {
+      this.modalShow = true
     }
   },
   created () {
