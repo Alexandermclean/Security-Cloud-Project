@@ -881,3 +881,5 @@ app.get(["/", "/index.html"], (req, res, next) =>{
 })
 ```
 4.webpack打包的配置文件设置，webpack(webpackConfig)这一步就是用配置文件创建一个用来传给webpack-middle-ware的对象，主要修改了entry和plugins，entry添加webpack-hot-middleware/client入口和plugins添加热加载的插件new webpack.optimize.OccurrenceOrderPlugin()和new webpack.HotModuleReplacementPlugin()。
+正常启动命令，也可以在package.json的scripts里面自定义一个启动命令。
+![](./assets/nodemon.PNG)
