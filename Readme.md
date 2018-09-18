@@ -911,8 +911,22 @@ app.get(["/", "/index.html"], (req, res, next) =>{
 ![](./assets/nodemon.PNG)
 
 ### 3.集成插件和工具
+1.router
+路由的具体设置可以看[上文](https://github.com/Alexandermclean/Security-Cloud-Project#1%E8%B7%AF%E7%94%B1router)，有专门针对路由设置的详细介绍；或者目录下的[项目代码](https://github.com/Alexandermclean/Security-Cloud-Project/blob/master/buildvue/src/router/index.js)。
+```javascript
+// main.js
+import router from './router'
+
+// router文件夹下index.js
+
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+```
 1.vuex 
 ```javascript
+// main.js文件
 import Vue from 'vue'
 import Vuex from 'vuex'
 import vuexStore from './store/index'
