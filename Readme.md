@@ -864,6 +864,7 @@ session 也是类似的道理，服务器要知道当前发请求给自己的是
 > 在看源码前需要先了解一下强类型模板类的js语言，类似typescript或是flow，vue2.0就是用flow写的（原因[链接](https://www.zhihu.com/question/46397274)）个人看完之后觉得flow好用一点，轻量不干预源码。
 
 ## 13.vue+nodejs+webpack环境搭建
+又要写另一个项目了 = =记录一下基于webpack搭建Vue开发环境的操作和配置
 ### 1.vue-cli搭建框架
 vue init webpack xxx--cd xxx--npm install
 ### 2.nodejs启动dev
