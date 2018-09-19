@@ -924,7 +924,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 ```
-1.vuex 
+2.vuex 
 ```javascript
 // main.js文件
 import Vue from 'vue'
@@ -975,7 +975,7 @@ export default {
 
 ```
 
-2.axios 
+3.axios 
 ```javascript
 import axios from './api/axios'
 Vue.prototype.$axios = axios
@@ -988,7 +988,7 @@ axios.defaults.headers = Object.assign(axios.defaults.headers, {'Cache-Control':
 
 export default axios
 ```
-3.iview 
+4.iview 
 ```javascript
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
