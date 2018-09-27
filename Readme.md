@@ -984,6 +984,8 @@ Vue.prototype.$axios = axios
 import axios from 'axios'
 
 axios.defaults.timeout = 5000
+
+// 防止IE浏览器的GET操作请求同一接口时从缓存拿数据
 axios.defaults.headers = Object.assign(axios.defaults.headers, {'Cache-Control': 'no-cache'})
 
 export default axios
@@ -998,6 +1000,43 @@ Vue.use(iView)
 {
 	rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
 }
+```
+5.jquery
+```javascript
+// main.js
+import $ from 'jquery'
+
+new Vue({
+  el: '#app',
+  router,
+  components: { App },
+  template: '<App/>',
+  $: $,
+  store: vuexStore
+})
+
+// node打包配置文件webpack-server.js
+// 在plugins中添加
+new webpack.ProvidePlugin({
+  $: 'jquery',
+  jQuery: 'jquery'
+})
+```
+6.公共样式
+```javascript
+// vue-loader.js文件，添加入口css文件路径和输出文件名称
+entry: {
+	common: '../static/css/common.css'
+},
+output: {
+	filename: './css/[name].css'
+}
+
+// webpack-server文件，entry中添加import公共css文件的js文件
+style: ["./static/js/style.js"]
+
+// static/js/style.js文件
+import '../css/common.css'
 ```
 
 ## 14.HTTPS协议加密机制

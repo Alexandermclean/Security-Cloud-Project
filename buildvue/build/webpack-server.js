@@ -29,6 +29,7 @@ module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
     app: ["webpack-hot-middleware/client", "babel-polyfill", "./src/main.js"],
+    style: ["./static/js/style.js", "webpack-hot-middleware/client"]
   },
   output: {
     path: config.build.assetsRoot,
@@ -100,6 +101,10 @@ module.exports = {
       filename: 'index.html',
       template: 'index.html',
       inject: true
+    }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery'
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
