@@ -1101,3 +1101,23 @@ import '../css/common.css'
 ![](./assets/ca2.jpg)
 
 > 不由得感叹一句，网络安全真的很难得啊 = =
+
+## 15.关于IE9浏览器CSS文件大小限制问题
+前两天搭完新项目的环境跑在chrome浏览器是正常的，但在IE9里面样式失效了，具体表现就是写在vue文件中style标签里的样式不起作用，但在行内或是外联的CSS样式是可以的= =  
+找了资料和研究了一哈，根本原因是在IE9里面单个CSS文件大小不能超过234kb，超过的部分会被浏览器忽略，由于项目框架引入了iview组件，iview的css文件较大，因此写在style标签里的样式被忽略了。  
+所以可以把引用iview组件的css的操作从main.js转移到static里的style.js来引用，类似于引用common.css的做法。  
+```javascript
+webpack-server.js // 打包配置文件
+
+entry: {
+    app: ["webpack-hot-middleware/client", "babel-polyfill", "./src/main.js"],
+    style: ["./static/js/style.js", "webpack-hot-middleware/client"]
+  } // 入口文件加入了style.js
+
+static/js/style.js // 引入样式的js文件
+
+import '../css/common.css'
+
+```
+
+这样做确实可以解决IE9里面css文件过大导致样式失效的问题，但是和我一开始想用切割打包后的css文件的做法不一样= = emmmmmm猜想应该是放在static文件夹里的文件打包的时候webpack都会自动压缩，所以文件大小要小很多。

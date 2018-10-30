@@ -22,11 +22,11 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: './src/main.js'
+    app: './src/main.js'  // 入口文件 not null
   },
   output: {
-    path: config.build.assetsRoot,
-    filename: '[name].js',
+    path: config.build.assetsRoot, // path.resolve(__dirname, '../dist'),类似于cd到/config下，../再出来找到dist文件夹
+    filename: '[name].js',  // 占位符，取值为entry的键即app
     publicPath: process.env.NODE_ENV === 'production'
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
@@ -38,7 +38,7 @@ module.exports = {
       '@': resolve('src'),
     }
   },
-  module: {
+  module: {     // loader
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
