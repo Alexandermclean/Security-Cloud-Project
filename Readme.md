@@ -1131,8 +1131,8 @@ ISO为了更好的使网络应用更为普及，就推出了OSI参考模型。�
 
 不同协议在最初OSI模型中的位置：  
 
-|:-:|:-|:-|
 |7|应用层|例如HTTP、SMTP、SNMP、FTP、Telnet、SIP、SSH、NFS、RTSP、XMPP、Whois、ENRP|
+|:-:|:-|:-|
 |6|表示层|例如XDR、ASN.1、SMB、AFP、NCP|
 |5|会话层|例如ASAP、TLS、SSH、ISO 8327 / CCITT X.225、RPC、NetBIOS、ASP、Winsock、BSD sockets|
 |4|传输层|例如TCP、UDP、RTP、SCTP、SPX、ATP、IL|
