@@ -1231,4 +1231,118 @@ TCP协议可以保证数据通信的完整性，这是怎么做到的？
 > hostB没有收到100-120这段编号的数据包，会重复发ACK=100，触发hostA重发数据包
 
 ## 17.关于上传和下载
-最近的需求呢关于上传下载的特别多=  =先说下载吧，之前我也就构造一个form的dom结构，再通过submit()方法提交，只要后台提供的是正常的文件流的话，浏览器会自动生成文件，但有一点需要注意的是返回头必须是application/octet-stream，这点你可以自己在node层加工一下返回头。但自从我发现了一个叫Blob的类之后就觉得这种方法更方便了，可以像正常的ajax请求一样请求文件流到前端自己处理，就避免了当传参复杂的时候form表单的局限性，具体实现下面再细说；再说说上传
+最近的需求呢关于上传下载的特别多=  =先说下载吧，之前我也就构造一个form的dom结构，再通过submit()方法提交，只要后台提供的是正常的文件流的话，浏览器会自动生成文件，但有一点需要注意的是返回头必须是application/octet-stream，这点你可以自己在node层加工一下返回头。但自从我发现了一个叫Blob的类之后就觉得这种方法更方便了，可以像正常的ajax请求一样请求文件流到前端自己处理，就避免了当传参复杂的时候form表单的局限性，具体实现下面再细说；再说说上传吧，上传主要是结合了前端[WebUploader](http://fex.baidu.com/webuploader/)以及nodejs的formidable模块实现的，具体怎么实现也是下面细说。  
+### 1.文件上传
+主要过程就是前端通过引入webUploader类来构造uploader对象，通过参数配置实现对接node层的处理上传的中间件。
+```javascript
+// vue文件
+import webuploader from '~js/webuploader/webuploader.min.js'
+this.uploader = webuploader.create({
+	// 列出几个我觉得比较重要的参数
+	// 具体的奇遇参数可参考官方文档
+	auto: true, // 选择完文件后是否自动上传
+	server: api/xxx/xx // 文件接收端地址，对应的是nodejs中间件的url
+	accept: { // 上传的文件类型
+		title: 'ak',
+		exteensions: 'ak',
+		mimeTypes: '.ak'
+	},
+	chunked: true, // 是否分片上传，针对较大文件
+})
+
+// 这里会列出来webuploader的一些钩子函数，方便在上传的不同步骤中做相应的事情
+// 利用on函数绑定不同事件触发的不同函数，例如：
+this.uploader.on('fileQueued', (file) = > {
+	do something // 文件被添加到队列中hook，做对文件类型的判断
+})
+// 官方文档也给出了一种较简单的写法
+this.uploader.onFileQueued = function (file) {
+	do something // 文件被添加到队列中hook
+}
+
+this.uploader.on('uploadStart', (file) = > {
+	do something // 文件开始上传的hook
+})
+
+this.uploader.on('uploadProgress', (file) = > {
+	do something // 文件上传中的hook，可做进度条之类的需求
+})
+
+this.uploader.on('uploadSuccess', (file) = > {
+	do something // 文件上传成功的hook
+})
+
+```
+> 前端对于上传文件的操作主要集中在几个hook函数中，用于告知用户上传文件的进程和结果
+
+```javascript
+// nodejs
+router.use('api/xxx/xx', function (req, res, next) {
+	utils.uploadFile(core.url, req)
+})
+
+// utils.js
+var formidable = require('formidable')
+var formData = require('form-data')
+var utils = {
+	uploadFile: function (url, req) {
+		// 这部分url的参数根据项目要求来
+		let tag = req.qurey.tag // 用来标识这是个上传动作
+		let module = req.qurey.module // 存储到数据库的哪个模块
+
+		return new Promise(function(resolve, reject) {
+			var formfile = new formidable.IncomingForm()
+			var formSubmit = new formData()
+
+			formfile.parse(req, function(err, fields, files) {
+				req.body = fields
+				req.files = files
+				// and so on 根据不同需求决定
+			})
+		})
+	}
+}
+```
+> node这边用到的主要是几个模块，例如formidable、path、form-data、fs、os等，这里的上传不涉及到前端人员存入数据库的过程，增加node层主要是为了简化前端代码，避免客户端卡顿；同时在node层封装文件流、请求和返回对象。
+
+### 下载
+至于下载呢，我一直是不太喜欢用前端构造form表单的形式，这样会显得笨重而且麻烦。前端时间写的关于下载安装包文件的需求，根据后台返回的二进制文件流利用Blob对象生成可点击下载的a标签，在dom上节省了很大一部分，而且是基于ajax请求的，因此在传参上很方便。
+```javascript
+// 还是先简单的写下构造form表单的下载吧
+template部分
+<form action='api/xxx/xxx' method='post' id='download' name='downloadForm'>
+	<input id='type' type='hidden' name='type' value=''>
+</form>
+
+script部分
+let type-data = JSON.stringify(object-data) // 如果需要传的参数是对象或者数组之类的，可以先stringify一下
+$('#type').attr('value', type-data)
+$('#download').submit() // 触发提交表单
+```
+> 这种方式的好处是浏览器会根据返回的二进制文件流自动生成对应的文件，不需要对返回的流做处理
+
+```javascript
+// ajax请求+Blob对象的方式
+this.$axios({
+	method: 'POST',
+	url: 'api/xxx/xxx',
+	responseType: 'arraybuffer', // 这里比较重要，要规定后台返回的类型是二进制流，才不会造成文件打不开的情况
+	data: {
+		type: {xx: xxx}
+	}
+}).then(r => {
+	const blob = new Blob([r.data], {type: 'application/zip'})
+	const url = window.URL || window.webkitURL || window.moxURL
+	const href = url.createObject(blob)
+
+	let link = document.createElement('a')
+	link.href = href
+	link.display = none
+	document.body.appendChild(link)
+	link.click
+	document.body.removeChild(link)
+})
+```
+> 这样的方式好处就是传参便捷、不用构造form表单和自定义强度高，可以对返回的文件流做自定义加工，例如文件名、文件格式之类，只要在link.click()之前都可以；只是对于node层来说，可能需要对返回的数据做加工，返回的可能就不只是单单一个文件流了，可以以对象的方式返回包含文件名、文件类型、文件大小等参数，便于前台展示。
+
+后面有时间找到了更便捷的下载上传方式再来更新吧，目前就这么多了 : )
