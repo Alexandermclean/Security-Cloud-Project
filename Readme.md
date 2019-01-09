@@ -1232,7 +1232,7 @@ TCP协议可以保证数据通信的完整性，这是怎么做到的？
 
 ## 17.关于上传和下载
 最近的需求呢关于上传下载的特别多=  =先说下载吧，之前我也就构造一个form的dom结构，再通过submit()方法提交，只要后台提供的是正常的文件流的话，浏览器会自动生成文件，但有一点需要注意的是返回头必须是application/octet-stream，这点你可以自己在node层加工一下返回头。但自从我发现了一个叫Blob的类之后就觉得这种方法更方便了，可以像正常的ajax请求一样请求文件流到前端自己处理，就避免了当传参复杂的时候form表单的局限性，具体实现下面再细说；再说说上传吧，上传主要是结合了前端[WebUploader](http://fex.baidu.com/webuploader/)以及nodejs的formidable模块实现的，具体怎么实现也是下面细说。  
-### 1.文件上传
+### 1.上传
 主要过程就是前端通过引入webUploader类来构造uploader对象，通过参数配置实现对接node层的处理上传的中间件。
 ```javascript
 // vue文件
@@ -1275,6 +1275,7 @@ this.uploader.on('uploadSuccess', (file) = > {
 ```
 > 前端对于上传文件的操作主要集中在几个hook函数中，用于告知用户上传文件的进程和结果
 
+
 ```javascript
 // nodejs
 router.use('api/xxx/xx', function (req, res, next) {
@@ -1305,7 +1306,7 @@ var utils = {
 ```
 > node这边用到的主要是几个模块，例如formidable、path、form-data、fs、os等，这里的上传不涉及到前端人员存入数据库的过程，增加node层主要是为了简化前端代码，避免客户端卡顿；同时在node层封装文件流、请求和返回对象。
 
-### 下载
+### 2.下载
 至于下载呢，我一直是不太喜欢用前端构造form表单的形式，这样会显得笨重而且麻烦。前端时间写的关于下载安装包文件的需求，根据后台返回的二进制文件流利用Blob对象生成可点击下载的a标签，在dom上节省了很大一部分，而且是基于ajax请求的，因此在传参上很方便。
 ```javascript
 // 还是先简单的写下构造form表单的下载吧
@@ -1320,6 +1321,7 @@ $('#type').attr('value', type-data)
 $('#download').submit() // 触发提交表单
 ```
 > 这种方式的好处是浏览器会根据返回的二进制文件流自动生成对应的文件，不需要对返回的流做处理
+
 
 ```javascript
 // ajax请求+Blob对象的方式
