@@ -831,6 +831,30 @@ this.yPromise(1000)
 ### 2.箭头函数
 待续。。。: p
 
+### 3.Set和Map数据结构
+JavaScript 原有的表示“集合”的数据结构，主要是数组（Array）和对象（Object），ES6 又添加了Map和Set。  
+#### 1.Set
+ES6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。  
+```javascript
+const set = new Set([1,2,3,3,4,5])
+console.log([...set])
+// or
+
+const set = new Set()
+[1,2,3,3,4,5].forEach ((val, index) => {set.add(val)})
+console.log([...set])
+// 1,2,3,4,5  size:5
+
+// 有个比较有意思的现象
+// 直接add一个数组，而不是把数组元素一个个add
+const set = new Set()
+set.add([1,2,3,4,5,5])
+console.log([...set])
+// [1,2,3,4,5,5] size:1  会多一个一样的add的数组且可以含有重复元素
+```
+> 既可以在实例化Set的时候把数组当参数传进Set()构造函数，也可以用Set对象的add方法添加成员。  
+Set函数可以接受一个数组（**或者具有 iterable 接口的其他数据结构**）作为参数，用来初始化
+
 ## 11.基于token的登录认证
 主要从sessions、cookies和token来说  
 待续。。。: p  
