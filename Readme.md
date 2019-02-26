@@ -834,6 +834,7 @@ this.yPromise(1000)
 ### 3.Set和Map数据结构
 JavaScript 原有的表示“集合”的数据结构，主要是数组（Array）和对象（Object），ES6 又添加了Map和Set。  
 #### 1.Set
+##### 实例化Set
 ES6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。  
 ```javascript
 const set = new Set([1,2,3,3,4,5])
@@ -852,8 +853,54 @@ set.add([1,2,3,4,5,5])
 console.log([...set])
 // [1,2,3,4,5,5] size:1  会多一个一样的add的数组且可以含有重复元素
 ```
-> 既可以在实例化Set的时候把数组当参数传进Set()构造函数，也可以用Set对象的add方法添加成员。  
-Set函数可以接受一个数组（**或者具有 iterable 接口的其他数据结构**）作为参数，用来初始化
+> 1.既可以在实例化Set的时候把数组当参数传进Set()构造函数，也可以用Set对象的add方法添加成员。  
+2.Set函数可以接受一个数组（**或者具有 iterable 接口的其他数据结构**）作为参数，用来初始化
+
+##### 特性和用法
+1.针对Set数据结构元素不重复的特性，可以很简单的对数组去重
+```javascript
+[...new Set(array)] // 去重array
+```
+也可以用于字符串去重
+```javascript
+[...new Set('aabbccd')].join('') // 去重array
+```
+> join() 方法用于把数组中的所有元素放入一个字符串，默认以逗号分割；可接受字符串参数x，即以x分割数组  
+
+2.向 Set 加入值的时候，不会发生类型转换，所以5和"5"是两个不同的值。Set内部判断两个值是否不同，使用的算法类似于**精确相等运算符**（===），主要的区别是在Set内部NaN等于自身，而精确相等运算符认为NaN不等于自身。
+```javascript
+let set = new Set()
+let a = NaN
+let b = NaN
+set.add(a)
+set.add(b)
+set // Set {NaN} 去重后
+
+NaN === NaN // false
+```
+另外，两个对象总是不相等的。
+```javascript
+let set = new Set();
+
+set.add({})
+set.size // 1
+
+set.add({})
+set.size // 2
+
+{} === {} // false
+```
+
+##### Set实例的属性和方法
+Set 结构的实例有以下属性。
+	Set.prototype.constructor：构造函数，默认就是Set函数。
+	Set.prototype.size：返回Set实例的成员总数。  
+	
+Set 实例的方法分为两大类：操作方法（用于操作数据）和遍历方法（用于遍历成员）。下面先介绍四个操作方法。
+	add(value)：添加某个值，返回 Set 结构本身。
+	delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
+	has(value)：返回一个布尔值，表示该值是否为Set的成员。
+	clear()：清除所有成员，没有返回值。
 
 ## 11.基于token的登录认证
 主要从sessions、cookies和token来说  
