@@ -14,6 +14,14 @@ emmmmm 今年2月1号开始的安全SASS云项目在上个月（3月31号）也�
 
 这次项目用的主要是VUE框架基于webpack、es6和node开发的环境，其中为了快速开发吧，用了一些iview的组件，自己也在iview提供的基础组件的基础上封装了几个功能性更强的组件。对于这次项目的总结我会每天写一点，当做记录吧，项目结束我会整理成几篇博文放到我的博客去。
 
+## 代码托管
+基于gitLab的代码版本管理，简单的写下流程吧
+1. git clone 项目远程主机路径/git clone -b 具体分支 项目远程主机；会有一个默认的remote叫做origin
+2. git remote add xxx（自己的远程主机名） 远程主机路径
+3. git push xxx 本地分支名称:远程分支名称（没有分支名称时自动创建）
+4. git fetch origin / git merge origin 分支名
+
+
 ## 1.路由（router）	
 在说项目路由前，可以先看看vue官方给出的[vue-router](https://router.vuejs.org/zh-cn/essentials/getting-started.html)的介绍，我也会列出一些稍微需要注意的点：
 ### 1.动态路由参数
