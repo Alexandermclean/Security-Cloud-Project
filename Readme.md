@@ -942,7 +942,6 @@ let arr = Array.from(set) // [1,2,3,4]
 
 #### 遍历操作
 Set结构的实例有四个遍历方法，可以用于遍历成员。  
-
 	* keys()：返回键名的遍历器
 	* values()：返回键值的遍历器
 	* entries()：返回键值对的遍历器
@@ -1004,7 +1003,7 @@ set.forEach((val, key) => console.log(key + ' : ' + val))
 > Set的forEach方法的参数就是一个处理函数，该函数的参数与数组的forEach一致，依次为键值、键名、集合本身（上例省略了该参数）。这里需要注意，**Set结构的键名就是键值（两者是同一个值），**因此第一个参数与第二个参数的值永远都是一样的。
 
 #### Array和Set组合应用
-1) 数组的map和filter方法也可以间接用于Set了
+1. 数组的map和filter方法也可以间接用于Set了
 ```javascript
 let set = new Set([1, 2, 3]);
 set = new Set([...set].map(x => x * 2));
@@ -1015,7 +1014,7 @@ set = new Set([...set].filter(x => (x % 2) == 0));
 // 返回Set结构：{2, 4}
 ```
 
-2) 使用Set可以很容易地实现并集（Union）、交集（Intersect）和差集（Difference）
+2. 使用Set可以很容易地实现并集（Union）、交集（Intersect）和差集（Difference）
 ```javascript
 let a = new Set([1, 2, 3])
 let b = new Set([4, 3, 2])
