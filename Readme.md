@@ -844,16 +844,15 @@ this.yPromise(1000)
 ### 2.箭头函数
 待续。。。: p
 
-### 3.Set和Map数据结构
+### 3.Set数据结构
 JavaScript 原有的表示“集合”的数据结构，主要是数组（Array）和对象（Object），ES6 又添加了Map和Set。  
-#### 1.Set
 ```javaacript
 // 记住简单的用法就行
 let set = new Set([1,2,2,3,3,4])
 [...set]  // [1,2,3,4]
 set.size // 4
 ```
-##### 实例化Set
+#### 实例化Set
 ES6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。  
 ```javascript
 const set = new Set([1,2,3,3,4,5])
@@ -875,7 +874,7 @@ console.log([...set])
 > 1.既可以在实例化Set的时候把数组当参数传进Set()构造函数，也可以用Set对象的add方法添加成员。  
 2.Set函数可以接受一个数组（**或者具有 iterable 接口的其他数据结构**）作为参数，用来初始化
 
-##### 特性和用法
+#### 特性和用法
 1.针对Set数据结构元素不重复的特性，可以很简单的对数组去重
 ```javascript
 [...new Set(array)] // 去重array
@@ -910,7 +909,7 @@ set.size // 2
 {} === {} // false
 ```
 
-##### Set实例的属性和方法
+#### Set实例的属性和方法
 1. Set 结构的实例有以下属性。
 	* Set.prototype.constructor：构造函数，默认就是Set函数。
 	* Set.prototype.size：返回Set实例的成员总数。  
@@ -941,7 +940,7 @@ let arr = Array.from(set) // [1,2,3,4]
 ```
 
 
-##### 遍历操作
+#### 遍历操作
 Set结构的实例有四个遍历方法，可以用于遍历成员。  
 
 	* keys()：返回键名的遍历器
@@ -951,7 +950,7 @@ Set结构的实例有四个遍历方法，可以用于遍历成员。
 
 > 需要特别指出的是，Set的遍历顺序就是插入顺序。这个特性有时非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。
 
-(1) keys()，values()，entries()  
+##### keys()，values()，entries()  
 keys方法、values方法、entries方法返回的都是遍历器对象（也就是Iterator对象）。由于Set结构没有键名，只有键值（或者说键名和键值是同一个值），所以keys方法和values方法的行为完全一致。
 ```javascript
 let set = new Set(['yu', 'zheng', 'hui']);
@@ -993,7 +992,7 @@ for (let item of set) { // 等同于for (let item of set.values())
 // hui
 ```
 
-(2) forEach()  
+##### forEach()  
 Set结构的实例与数组一样，也拥有forEach方法，用于对每个成员执行某种操作，没有返回值。
 ```javascript
 let set = new Set([1, 4, 9]);
@@ -1004,7 +1003,7 @@ set.forEach((val, key) => console.log(key + ' : ' + val))
 ```
 > Set的forEach方法的参数就是一个处理函数，该函数的参数与数组的forEach一致，依次为键值、键名、集合本身（上例省略了该参数）。这里需要注意，**Set结构的键名就是键值（两者是同一个值），**因此第一个参数与第二个参数的值永远都是一样的。
 
-##### Array和Set组合应用
+#### Array和Set组合应用
 1) 数组的map和filter方法也可以间接用于Set了
 ```javascript
 let set = new Set([1, 2, 3]);
