@@ -1031,6 +1031,155 @@ let intersect = new Set([...a].filter(x => b.has(x)))
 let difference = new Set([...a].filter(x => !b.has(x)))
 // Set {1}
 ```
+
+### 4.Map数据结构
+Map数据结构它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。也就是说，Object结构提供了“字符串—值”的对应，Map结构提供了“值—值”的对应，是一种更完善的Hash结构实现。
+```javascript
+const m = new Map()
+const o = {p: 'Hello World'} // 这里的对象一定要用声明的变量作为key，保证set和get是指向同一块内存
+
+m.set(o, 'content')
+m.get(o) // "content"
+
+m.has(o) // true
+m.delete(o) // true
+m.has(o) // false
+```
+> 上面代码使用Map结构的set方法，将对象o当作m的一个键，然后又使用get方法读取这个键，接着使用delete方法删除了这个键。
+
+#### 构造函数
+1. 作为构造函数，Map也可以接受一个数组作为参数。该数组的成员是一个个表示键值对的数组。
+```javascript
+const map = new Map([
+  ['name', 'yyy'],
+  ['title', 'hhh']
+])
+
+map.size // 2
+map.has('name') // true
+map.get('name') // "yyy"
+map.has('title') // true
+map.get('title') // "hhh"
+```
+
+> Map构造函数接受数组作为参数，本质上还是执行了arr.forEach([key,val], index) => map.set(key, val)
+
+2. 不仅仅是数组，任何具有Iterator接口、且每个成员都是一个双元素的数组的数据结构，都可以当作Map构造函数的参数。这就是说，Set和Map都可以用来生成新的 Map。
+```javascript
+const set = new Set([['yyy',1],['zzz',2],['hhh',3]])
+const map = new Map([['yyy',4],['zzz',5],['hhh',6]])
+
+const origin_map1 = new Map(set)
+const origin_map2 = new Map(map)
+
+origin_map1.get('yyy') // 1
+origin_map2.get('yyy') // 4
+```
+
+> 分别使用Set对象和Map对象当作Map构造函数的参数，结果都生成了新的Map对象。
+
+3. 如果对同一个键多次赋值，后面的值将覆盖前面的值；不存在的键对应的值都是undefined。
+```javascript
+const map = new Map()
+
+map
+.set(1, 'aaa')
+.set(1, 'bbb')
+
+map.get(1) // "bbb"
+
+map.get('asfddfsasadf') // undefined
+```
+
+4. 只有对**同一个对象**的引用，Map 结构才将其视为同一个键。
+```javascript
+const map = new Map()
+
+map.set(['a'], 555)
+map.get(['a']) // undefined
+
+let key = ['a'] // 赋值给变量后get和set引用的都是同一块内存了
+map.set(key, 555)
+map.get(key) // 555
+
+```
+
+> 上面代码的set和get方法，表面是针对同一个键，但实际上这是两个值，两个对象的内存地址是不一样的，因此get方法无法读取该键，返回undefined。
+
+5. 同样的值的两个实例，在Map结构中被视为两个键
+```javascript
+const map = new Map()
+
+const k1 = ['a']
+const k2 = ['a']
+
+map
+.set(k1, 111)
+.set(k2, 222)
+
+map.get(k1) // 111
+map.get(k2) // 222
+```
+
+> 变量k1和k2的值是一样的，但是它们指向的是两块不同的内存，因此在Map结构中被视为两个键
+
+综上所述，Map的键实际上是跟内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞（clash）的问题，我们扩展别人的库的时候，如果使用对象作为键名，就不用担心自己的属性与原作者的属性同名。  
+
+如果Map的键是一个简单类型的值（数字、字符串、布尔值），则只要两个值严格相等（===），Map将其视为一个键，比如0和-0就是一个键，布尔值true和字符串true则是两个不同的键。另外，undefined和null也是两个不同的键。  
+
+**虽然NaN不严格相等于自身，但Map将其视为同一个键。**
+```javascript
+let map = new Map()
+
+map.set(-0, 123)
+map.get(+0) // 123
+
+map.set(true, 1)
+map.set('true', 2)
+map.get(true) // 1
+
+map.set(undefined, 3)
+map.set(null, 4)
+map.get(undefined) // 3
+
+map.set(NaN, 123)
+map.get(NaN) // 123
+```
+
+#### 属性和操作方法
+Map 结构的实例有以下属性和操作方法：
+1. 属性
+	* size 返回Map结构的成员总数
+2. 方法
+	* set(key, value) 设置键名key对应的键值为value，然后返回整个Map结构
+	* get(key) 读取key对应的键值
+	* has(key) 返回一个布尔值，表示某个键是否在当前 Map 对象之中
+	* delete(key) 删除某个键，返回true。如果删除失败，返回false
+	* clear() 清除所有成员，没有返回值
+
+```javascript
+const map = new Map()
+map.set('foo', true)
+map.set('bar', false)
+
+map.size // 2
+map.set('yyy', 1).set('zzz', 2) // set方法返回的是map对象，因此可以有链式写法
+
+map.get('yyy') // 1
+map.get('hhh') // undefined
+
+map.set(undefined, 'hah')
+map.get(undefined) // hah
+map.has(undefined) // true
+
+map.delete('yyy') // 成功后返回true
+map.has('yyy') // fasle
+
+map.clear()
+map.has(undefined) // false
+```
+
+
 ## 11.基于token的登录认证
 主要从sessions、cookies和token来说  
 待续。。。: p  
