@@ -942,15 +942,16 @@ let arr = Array.from(set) // [1,2,3,4]
 
 
 ##### 遍历操作
-1. Set 结构的实例有四个遍历方法，可以用于遍历成员。
+Set结构的实例有四个遍历方法，可以用于遍历成员。  
+
 	* keys()：返回键名的遍历器
 	* values()：返回键值的遍历器
 	* entries()：返回键值对的遍历器
 	* forEach()：使用回调函数遍历每个成员
 
-> 需要特别指出的是，Set的遍历顺序就是插入顺序。这个特性有时非常有用，比如使用 Set 保存一个回调函数列表，调用时就能保证按照添加顺序调用。
+> 需要特别指出的是，Set的遍历顺序就是插入顺序。这个特性有时非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。
 
-1) keys()，values()，entries()  
+(1) keys()，values()，entries()  
 keys方法、values方法、entries方法返回的都是遍历器对象（也就是Iterator对象）。由于Set结构没有键名，只有键值（或者说键名和键值是同一个值），所以keys方法和values方法的行为完全一致。
 ```javascript
 let set = new Set(['yu', 'zheng', 'hui']);
@@ -992,7 +993,7 @@ for (let item of set) { // 等同于for (let item of set.values())
 // hui
 ```
 
-2)forEach()  
+(2) forEach()  
 Set结构的实例与数组一样，也拥有forEach方法，用于对每个成员执行某种操作，没有返回值。
 ```javascript
 let set = new Set([1, 4, 9]);
