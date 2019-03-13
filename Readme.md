@@ -847,6 +847,12 @@ this.yPromise(1000)
 ### 3.Set和Map数据结构
 JavaScript 原有的表示“集合”的数据结构，主要是数组（Array）和对象（Object），ES6 又添加了Map和Set。  
 #### 1.Set
+```javaacript
+// 记住简单的用法就行
+let set = new Set([1,2,2,3,3,4])
+[...set]  // [1,2,3,4]
+set.size // 4
+```
 ##### 实例化Set
 ES6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。  
 ```javascript
@@ -914,7 +920,118 @@ set.size // 2
 	* delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
 	* has(value)：返回一个布尔值，表示该值是否为Set的成员。
 	* clear()：清除所有成员，没有返回值。
+```javascript
+s.add(1).add(2).add(2);
+// 注意2被加入了两次
 
+s.size // 2
+
+s.has(1) // true
+s.has(2) // true
+s.has(3) // false
+
+s.delete(2);
+s.has(2) // false
+```
+
+另外，除了之前的[...set]这种方式把set类型转换成数组外，Array的from()方法也可以。
+```javascript
+let set = new Set([1,2,2,3,3,4])
+let arr = Array.from(set) // [1,2,3,4]
+```
+
+
+##### 遍历操作
+1. Set 结构的实例有四个遍历方法，可以用于遍历成员。
+	* keys()：返回键名的遍历器
+	* values()：返回键值的遍历器
+	* entries()：返回键值对的遍历器
+	* forEach()：使用回调函数遍历每个成员
+
+> 需要特别指出的是，Set的遍历顺序就是插入顺序。这个特性有时非常有用，比如使用 Set 保存一个回调函数列表，调用时就能保证按照添加顺序调用。
+
+1) keys()，values()，entries()  
+keys方法、values方法、entries方法返回的都是遍历器对象（也就是Iterator对象）。由于Set结构没有键名，只有键值（或者说键名和键值是同一个值），所以keys方法和values方法的行为完全一致。
+```javascript
+let set = new Set(['yu', 'zheng', 'hui']);
+
+for (let item of set.keys()) {
+  console.log(item);
+}
+// yu
+// zheng
+// hui
+
+for (let item of set.values()) {
+  console.log(item);
+}
+// yu
+// zheng
+// hui
+
+for (let item of set.entries()) {
+  console.log(item);
+}
+// ["yu", "yu"]
+// ["zheng", "zheng"]
+// ["hui", "hui"]
+```
+> entries方法返回的遍历器，同时包括键名和键值，所以每次输出一个数组，它的两个成员完全相等。
+
+另外，Set结构的实例默认可遍历，它的默认遍历器生成函数就是它的values方法。
+```javacript
+Set.prototype[Symbol.iterator] === Set.prototype.values
+// true
+
+// 可以省略values方法，直接用for...of循环遍历 Set
+for (let item of set) { // 等同于for (let item of set.values())
+  console.log(item)
+}
+// yu
+// zheng
+// hui
+```
+
+2)forEach()  
+Set结构的实例与数组一样，也拥有forEach方法，用于对每个成员执行某种操作，没有返回值。
+```javascript
+let set = new Set([1, 4, 9]);
+set.forEach((val, key) => console.log(key + ' : ' + val))
+// 1 : 1
+// 4 : 4
+// 9 : 9
+```
+> Set的forEach方法的参数就是一个处理函数，该函数的参数与数组的forEach一致，依次为键值、键名、集合本身（上例省略了该参数）。这里需要注意，**Set结构的键名就是键值（两者是同一个值），**因此第一个参数与第二个参数的值永远都是一样的。
+
+##### Array和Set组合应用
+1) 数组的map和filter方法也可以间接用于Set了
+```javascript
+let set = new Set([1, 2, 3]);
+set = new Set([...set].map(x => x * 2));
+// 返回Set结构：{2, 4, 6}
+
+let set = new Set([1, 2, 3, 4, 5]);
+set = new Set([...set].filter(x => (x % 2) == 0));
+// 返回Set结构：{2, 4}
+```
+
+2) 使用Set可以很容易地实现并集（Union）、交集（Intersect）和差集（Difference）
+```javascript
+let a = new Set([1, 2, 3])
+let b = new Set([4, 3, 2])
+
+// 并集
+let union = new Set([...a, ...b])
+// Set {1, 2, 3, 4}
+
+// 交集
+let intersect = new Set([...a].filter(x => b.has(x)))
+// set {2, 3}
+
+// 差集
+let difference = new Set([...a].filter(x => !b.has(x)))
+// Set {1}
+```
 ## 11.基于token的登录认证
 主要从sessions、cookies和token来说  
 待续。。。: p  
