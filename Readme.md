@@ -1033,6 +1033,14 @@ let difference = new Set([...a].filter(x => !b.has(x)))
 ```
 
 ### 4.Map数据结构
+基本用法
+```javascript
+const map = new Map([
+	[true, 1],[{}, 1],['y', 'h']
+])
+map // {true => 1, {…} => 1, "y" => "h"}
+```
+
 Map数据结构它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。也就是说，Object结构提供了“字符串—值”的对应，Map结构提供了“值—值”的对应，是一种更完善的Hash结构实现。
 ```javascript
 const m = new Map()
@@ -1177,6 +1185,176 @@ map.has('yyy') // fasle
 
 map.clear()
 map.has(undefined) // false
+```
+
+#### 遍历方法
+和Set一样，Map也提供三个遍历器生成函数和一个遍历方法。  
+
+* keys()：返回键名的遍历器。
+* values()：返回键值的遍历器。
+* entries()：返回所有成员的遍历器。
+* forEach()：遍历 Map 的所有成员。
+
+##### keys() values() entries()
+> 需要特别注意的是，Map 的遍历顺序就是插入顺序。
+```javascrpt
+const map = new Map([
+  ['F', 'no'],
+  ['T',  'yes'],
+]);
+
+for (let key of map.keys()) {  // 遍历key
+  console.log(key);
+}
+// "F"
+// "T"
+
+for (let value of map.values()) { // 遍历value
+  console.log(value);
+}
+// "no"
+// "yes"
+
+for (let item of map.entries()) { // 遍历Map成员
+  console.log(item[0], item[1]);
+}
+// "F" "no"
+// "T" "yes"
+
+// 或者
+for (let [key, value] of map.entries()) {
+  console.log(key, value);
+}
+// "F" "no"
+// "T" "yes"
+
+// 等同于使用map.entries()
+for (let [key, value] of map) { // Map默认的遍历方法（Symbol.iterator属性）就是entries
+  console.log(key, value);
+}
+// "F" "no"
+// "T" "yes"
+```
+
+##### forEach()
+Map还有一个forEach方法，与数组的forEach方法类似，也可以实现遍历。
+```javascript
+map.forEach(function(value, key, map) {
+  console.log("Key: %s, Value: %s", key, value)
+})
+
+const reporter = {
+  report: function(key, value) {
+    console.log("Key: %s, Value: %s", key, value)
+  }
+}
+map.forEach(function(value, key, map) {
+  this.report(key, value)
+}, reporter)
+```
+> forEach()可以接受第二个参数，可以改变this的指向
+
+#### 与其他数据结构的互相转换
+##### 1.Map转成数组
+Map 结构转为数组结构，比较快速的方法是使用扩展运算符（...）。
+```javascript
+const map = new Map([
+  [1, 'one'],
+  [2, 'two'],
+  [3, 'three']
+])
+
+[...map.keys()]
+// [1, 2, 3]
+
+[...map.values()]
+// ['one', 'two', 'three']
+
+[...map.entries()]
+// [[1,'one'], [2, 'two'], [3, 'three']]
+
+[...map]
+// [[1,'one'], [2, 'two'], [3, 'three']]
+```
+
+从而可以结合数组的map方法、filter方法，可以实现 Map 的遍历和过滤（Map 本身没有map和filter方法）。
+```javascript
+const map0 = new Map()
+  .set(1, 'a')
+  .set(2, 'b')
+  .set(3, 'c')
+
+const map1 = new Map(
+  [...map0].filter(([k, v]) => k < 3) // [k, v]结构赋值
+)
+// 产生 Map 结构 {1 => 'a', 2 => 'b'}
+
+const map2 = new Map(
+  [...map0].map(([k, v]) => [k * 2, '_' + v])
+)
+// 产生 Map 结构 {2 => '_a', 4 => '_b', 6 => '_c'}
+```
+
+##### 2.Map转为对象
+```javascript
+let obj = Object.create(null)
+const map = new Map([
+	['y',1],['z',2],['h',3]
+])
+
+map.forEach(function(v,k) {
+	obj[k] = v
+})
+// or
+for (let [k,v] of map) {
+	obj[k] = v
+}
+```
+
+> 这样无损转换的前提是key都是字符串，如果有非字符串的键名，那么这个键名会被转成字符串，再作为对象的键名。
+
+##### 3.对象转为Map
+```javascript
+let obj = {'y': 1, 'z': 2, 'h': 3}
+const map = new Map()
+
+for (let k in obj) {
+	map.set(i, obj[i])
+}
+// or
+for (let k of Object.keys(obj)) { //Object.keys(obj) => ['y','z','h']
+	map.set(i, obj[i])
+}
+```
+
+##### 3.Map转为JSON
+```javascript
+let obj = Object.create(null)
+const map = new Map([
+	['y',1],['z',2],['h',3]
+])
+
+map.forEach(function(v,k) {
+	obj[k] = v
+})
+// or
+for (let [k,v] of map) {
+	obj[k] = v
+}
+
+JSON.stringify(obj) // 在Map转换成对象的基础上JSON.stringify()
+```
+
+另一种情况是当Map的键是非字符串时，这时候可以选择转成JSON数组
+
+```javascript
+const map = new Map([
+	[true,1],[{'y': h},2],['h',3]
+])
+
+const arr = [...map] // [[true,1],[{'y': h},2],['h',3]]
+
+JSON.stringify(arr)
 ```
 
 
