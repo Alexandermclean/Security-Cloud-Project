@@ -1361,6 +1361,109 @@ const arr = [...map] // [[true,1],[{'y': h},2],['h',3]]
 JSON.stringify(arr)
 ```
 
+### 5.解构
+#### 1.基本概念
+ES6允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）。
+
+```javascript
+// 以前赋值
+let a = 1
+let b = 2
+let c = 3
+
+// 用解构赋值
+let [a,b,c] = [1,2,3]
+```
+
+> 本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值
+
+**完全解构：**
+```javascript
+let [foo, [[bar], baz]] = [1, [[2], 3]]
+foo // 1
+bar // 2
+baz // 3
+
+let [ , , third] = ["foo", "bar", "baz"]
+third // "baz"
+
+let [x, , y] = [1, 2, 3]
+x // 1
+y // 3
+
+let [head, ...tail] = [1, 2, 3, 4]
+head // 1
+tail // [2, 3, 4]
+```
+
+**解构不成功：**
+```javascript
+let [foo] = []
+let [bar, foo] = [1]
+foo // undefined
+
+let [x, y, ...z] = ['a']
+x // "a"
+y // undefined
+z // []
+```
+
+**不完全解构：**
+等号左边的模式，只匹配一部分的等号右边的数组。这种情况下，解构依然可以成功。
+
+```javascript
+let [x, y] = [1, 2, 3];
+x // 1
+y // 2
+
+let [a, [b], d] = [1, [2, 3], 4];
+a // 1
+b // 2
+d // 4
+```
+
+**解构报错：**  
+如果等号的右边不是数组或者严格地说，不是可遍历的结构，那么将会报错。
+
+```javascript
+// 报错
+let [foo] = 1
+let [foo] = false
+let [foo] = NaN
+let [foo] = undefined
+let [foo] = null
+let [foo] = {}
+```
+
+> 上面的语句都会报错，因为等号右边的值，要么**转为对象**以后不具备Iterator接口（前五个表达式），要么本身就不具备Iterator接口（最后一个表达式）。
+
+**有Iterator接口数据格式的结构**
+例如Set数据结构和Generator函数：
+```javascript
+let [x, y, z] = new Set(['a', 'b', 'c'])
+x // "a"
+
+// Generator函数
+
+function* fibs() {
+  let a = 0;
+  let b = 1;
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
+}
+
+let [first, second, third, fourth, fifth, sixth] = fibs();
+sixth // 5
+```
+
+> fibs是一个Generator函数，原生具有Iterator接口。解构赋值会依次从这个接口获取值。
+
+
+
+#### 2.特性
+
 
 ## 11.基于token的登录认证
 主要从sessions、cookies和token来说  
